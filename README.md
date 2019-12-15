@@ -1,6 +1,8 @@
 ChurchyBot Part Deux
 ====================
 
+A poorly coded chat bot for Discord
+
 Development
 -----------
 
