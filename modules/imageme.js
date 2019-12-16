@@ -31,9 +31,7 @@ export default (client) => {
 
     const results = JSON.parse(response.body);
 
-    const item = _.sample(results.items);
-
-    return item.link;
+    return _.map(results.items, 'link');
   };
 
   if (!CSE_ID || !CSE_KEY) {
@@ -43,22 +41,26 @@ export default (client) => {
     client.on('message', async message => {
       let matches;
       let searchText;
+      let numImages = 1;
       let animated = false;
       if (matches = message.content.match(/^image me (.+)/)) {
         searchText = matches[1];
       } else if (matches = message.content.match(/^animate me (.+)/)) {
         searchText = matches[1];
         animated = true;
+      } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/)) {
+        searchText = matches[1];
+        numImages = 5;
       }
 
       if (searchText) {
         console.log(`imageme: Searching for "${searchText}", animated: ${animated}`);
-        const imgResult = await search(searchText, animated);
-        const embed = new Discord.RichEmbed()
-          .setTitle(searchText)
-          .setURL(imgResult)
-          .setImage(imgResult);
-        message.channel.send(embed);
+        const results = await search(searchText, animated);
+        _.each(_.sampleSize(results, numImages), imageUrl => {
+          const embed = new Discord.RichEmbed()
+            .setImage(imageUrl)
+          message.channel.send(embed);
+        });
       }
     });
   }
