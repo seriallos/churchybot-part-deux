@@ -3,12 +3,11 @@ import _ from 'lodash';
 import got from 'got';
 
 export default (client) => {
-  const PREFIXES = ['image me', 'animate me'];
-
   const CSE_ID = process.env.CHURCHYBOT_GOOGLE_CSE_ID;
   const CSE_KEY = process.env.CHURCHYBOT_GOOGLE_CSE_KEY;
 
   const search = async (text, animated) => {
+    const start = 1 + (10 * _.random(0, 9));
     const query = {
       q: text,
       searchType: 'image',
@@ -16,6 +15,7 @@ export default (client) => {
       fields: 'items(link)',
       cx: CSE_ID,
       key: CSE_KEY,
+      start,
     };
     if (animated) {
       query.fileType = 'gif';
@@ -39,6 +39,9 @@ export default (client) => {
     console.warn('"image me" and "animate me" are disabled!');
   } else {
     client.on('message', async message => {
+      if (message.author.bot) {
+        return;
+      }
       let matches;
       let searchText;
       let numImages = 1;
@@ -49,16 +52,20 @@ export default (client) => {
         searchText = matches[1];
         animated = true;
       } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/)) {
-        searchText = matches[1];
+        const searchMap = {
+          pug: 'cute pug',
+          kitty: 'cute kitty',
+        };
+        searchText = searchMap[matches[1]] || matches[1];
         numImages = 5;
       }
 
       if (searchText) {
-        console.log(`imageme: Searching for "${searchText}", animated: ${animated}`);
+        console.log(`imageme: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`);
         const results = await search(searchText, animated);
         _.each(_.sampleSize(results, numImages), imageUrl => {
           const embed = new Discord.RichEmbed()
-            .setImage(imageUrl)
+            .setImage(imageUrl);
           message.channel.send(embed);
         });
       }
