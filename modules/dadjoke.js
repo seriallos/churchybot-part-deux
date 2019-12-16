@@ -6,11 +6,15 @@ export default (client) => {
 
   const url = 'https://icanhazdadjoke.com/';
 
-  const response = await got(url);
+  client.on('message', async message => {
+    if (message.content.match(/^dad ?joke$/)) { 
+      const response = await got(url, { headers: { Accept: 'application/json' } });
 
-  const results = JSON.parse(response.body);
+      const results = JSON.parse(response.body);
 
-  const joke = results.joke;
+      const joke = results.joke;
 
-  return joke;
+      message.channel.send(joke);
+    }
+  });
 }
