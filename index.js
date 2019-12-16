@@ -33,7 +33,7 @@ async function main() {
       console.error('  export default (client) => { /* do stuff */ }');
       process.exit(2);
     }
-    module.default(client);
+    await module.default(client);
   }
 
   // set up discord events
