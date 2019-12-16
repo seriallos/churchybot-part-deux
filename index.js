@@ -42,7 +42,7 @@ async function main() {
   client.on('error', error => console.error('Discord client error', error));
   client.on('warn', warning => console.error('Discord client warning', warning));
   client.on('reconnecting', () => console.log('Discord client reconnecting'));
-  client.on('reconnecting', () => console.log('Discord client reconnecting'));
+  client.on('resume', () => console.log('Discord client resume'));
 
   // actually log the bot in
 
