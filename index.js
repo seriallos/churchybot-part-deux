@@ -7,6 +7,11 @@ async function main() {
 
   const TOKEN = process.env.CHURCHYBOT_DISCORD_TOKEN;
 
+  if (!TOKEN) {
+    console.error('CHURCHYBOT_DISCORD_TOKEN env var is not set up, terminating');
+    process.exit(1);
+  }
+
   client.on('ready', () => console.log('Discord client ready'));
   client.on('error', error => console.error('Discord client error', error));
   client.on('warn', warning => console.error('Discord client warning', warning));
