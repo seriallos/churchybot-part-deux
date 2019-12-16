@@ -43,6 +43,10 @@ async function main() {
   client.on('warn', warning => console.error('Discord client warning', warning));
   client.on('reconnecting', () => console.log('Discord client reconnecting'));
   client.on('resume', () => console.log('Discord client resume'));
+  client.on('rateLimit', rateLimitInfo => {
+    console.log('Discord client encountered a rate limit');
+    console.log(rateLimitInfo);
+  });
 
   // actually log the bot in
 
