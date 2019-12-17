@@ -46,12 +46,15 @@ export default (client) => {
       let searchText;
       let numImages = 1;
       let animated = false;
-      if (matches = message.content.match(/^image me (.+)/)) {
-        searchText = matches[1];
-      } else if (matches = message.content.match(/^animate me (.+)/)) {
-        searchText = matches[1];
+      let spoiler = false;
+      if (matches = message.content.match(/^(spoiler )?image me (.+)/i)) {
+        spoiler = Boolean(matches[1]);
+        searchText = matches[2];
+      } else if (matches = message.content.match(/^(spoiler )?animate me (.+)/i)) {
+        spoiler = Boolean(matches[1]);
+        searchText = matches[2];
         animated = true;
-      } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/)) {
+      } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/i)) {
         const searchMap = {
           pug: 'cute pug',
           kitty: 'cute kitty',
@@ -64,9 +67,13 @@ export default (client) => {
         console.log(`imageme: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`);
         const results = await search(searchText, animated);
         _.each(_.sampleSize(results, numImages), imageUrl => {
-          const embed = new Discord.RichEmbed()
-            .setImage(imageUrl);
-          message.channel.send(embed);
+          if (spoiler) {
+            message.channel.send(`|| ${imageUrl} ||`);
+          } else {
+            const embed = new Discord.RichEmbed()
+              .setImage(imageUrl);
+            message.channel.send(embed);
+          }
         });
       }
     });
