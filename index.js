@@ -18,6 +18,13 @@ async function main() {
     process.exit(1);
   }
 
+  let started = false;
+  let devChannel;
+  const devLog = msg => {
+    if (devChannel) {
+      devChannel.send(msg);
+    }
+  };
   const client = new Discord.Client();
 
   // load modules
@@ -38,9 +45,25 @@ async function main() {
 
   // set up discord events
 
-  client.on('ready', () => console.log('Discord client ready'));
-  client.on('error', error => console.error('Discord client error', error));
-  client.on('warn', warning => console.error('Discord client warning', warning));
+  client.on('ready', () => {
+    console.log('Discord client ready');
+    const guild = client.guilds.first();
+    devChannel = guild.channels.find(c => c.name === 'bot-spam');
+    if (!started) {
+      devLog('Bot started');
+      started = true;
+    } else {
+      devLog('Bot reconnected');
+    }
+  });
+  client.on('error', error => {
+    console.error('Discord client error', error);
+    devLog(`Client error: ${error.message}`);
+  });
+  client.on('warn', warning => {
+    console.error('Discord client warning', warning);
+    devLog(`Client warning: ${warning.message}`);
+  });
   client.on('reconnecting', () => console.log('Discord client reconnecting'));
   client.on('resume', () => console.log('Discord client resume'));
   client.on('rateLimit', rateLimitInfo => {
