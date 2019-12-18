@@ -17,7 +17,6 @@ const CHANNELS = [{
 }];
 
 const purge = async (client, channelName, ttl, topic) => {
-  console.log(`Running purger on ${channelName}`);
   const channel = client.guilds.first().channels.find(c => c.name === channelName);
 
   if (!channel) {
@@ -61,6 +60,7 @@ export default client => {
   client.on('ready', () => {
     // start purger task
     _.each(CHANNELS, channel => {
+      console.log(`purger: started ${channelName} purger, ttl ${channel.ttl}`);
       purge(client, channel.name, channel.ttl, channel.topic);
     });
   });

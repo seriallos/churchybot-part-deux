@@ -43,8 +43,10 @@ export default async (client) => {
         });
         await save(quotes);
         message.channel.send('Quote has been stored for future prosperity');
+        console.log(`ooc: Quote stored. speaker: "${speaker}", quote: "${quote}"`);
       } else {
         message.channel.send('Invalid OOC format. Must be "ooc NAME: QUOTE"');
+        console.log(`ooc: invalid ooc request`);
       }
     } else {
       const roll = 100 * _.random(0, 1, true);
@@ -52,6 +54,7 @@ export default async (client) => {
         const quote = _.sample(quotes);
         if (quote) {
           message.channel.send(`"${quote.quote}" - ${quote.speaker}`);
+          console.log(`ooc: random quote rolled (${roll} rolled, threshold ${OOC_CHANCE_PCT})`);
         }
       }
     }

@@ -12,7 +12,7 @@ export default (client) => {
       return;
     }
     if (message.content.match(/^dad ?joke$/)) {
-      console.log('Looking up a dad joke');
+      console.log('dadjoke requested');
       const response = await got(url, { headers: { Accept: 'application/json' } });
 
       const results = JSON.parse(response.body);

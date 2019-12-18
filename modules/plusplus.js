@@ -53,14 +53,18 @@ export default async (client) => {
         embed.addBlankField(true);
         embed.addField('Bottom Scores', _.map(bottomScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
         message.channel.send(embed);
+        console.log('plusplus: scores requested');
       } else if (command === 'top 10') {
         const topScores = _.take(_.reverse(_.sortBy(plusplus.scores, 'score')), 10);
         message.channel.send(_.map(topScores, ts => `${ts.subject}: ${ts.score}`).join('\n'));
+        console.log('plusplus: top 10 requested');
       } else if (command === 'bottom 10') {
         const bottomScores = _.take(_.sortBy(plusplus.scores, 'score'), 10);
         message.channel.send(_.map(bottomScores, ts => `${ts.subject}: ${ts.score}`).join('\n'));
+        console.log('plusplus: bottom 10 requested');
       } else if (matches = command.match(/score (.*)$/)) {
         const subject = _.toLower(matches[1]);
+        console.log(`plusplus: score for ${subject} requested`);
         const result = _.find(plusplus.scores, { subject });
         if (result) {
           const numReasons = 6;
@@ -82,8 +86,10 @@ export default async (client) => {
           embed.addBlankField(true);
           embed.addField('Negative Raisins', negReasons.join('\n') || 'None', true);
           message.channel.send(embed);
+          console.log(`plusplus: score for ${subject} sent`);
         } else {
           message.channel.send(`"${subject}" is not in the database`);
+          console.log(`plusplus: score for ${subject} not found`);
         }
       }
     } else {
@@ -97,6 +103,7 @@ export default async (client) => {
         const adjust = plusOrNeg === '++' ? 1 : -1;
 
         if (subject === author) {
+          console.log(`plusplus: user denied self adjust`);
           message.channel.send('You cannot plus/neg yourself');
           return;
         }
@@ -115,6 +122,7 @@ export default async (client) => {
         const recentChange = _.find(recentChanges, { author, subject });
         if (recentChange) {
           message.channel.send('Too soon, executus');
+          console.log(`plusplus: user denied adjust due to author/subject rate limiting`);
           return;
         }
 
@@ -156,6 +164,7 @@ export default async (client) => {
         }
         save(plusplus);
         message.channel.send(response);
+        console.log(`plusplus: score updated for ${subject} by ${author}`);
       }
     }
   });
