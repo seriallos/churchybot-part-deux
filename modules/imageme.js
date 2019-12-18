@@ -2,6 +2,9 @@ import Discord from 'discord.js';
 import _ from 'lodash';
 import got from 'got';
 
+const SPOILER_CHANNELS = [
+];
+
 export default (client) => {
   const CSE_ID = process.env.CHURCHYBOT_GOOGLE_CSE_ID;
   const CSE_KEY = process.env.CHURCHYBOT_GOOGLE_CSE_KEY;
@@ -46,12 +49,12 @@ export default (client) => {
       let searchText;
       let numImages = 1;
       let animated = false;
-      let spoiler = false;
+      let spoiler = _.includes(SPOILER_CHANNELS, _.toLower(message.channel.name));
       if (matches = message.content.match(/^(spoiler )?image me (.+)/i)) {
-        spoiler = Boolean(matches[1]);
+        spoiler = spoiler || Boolean(matches[1]);
         searchText = matches[2];
       } else if (matches = message.content.match(/^(spoiler )?animate me (.+)/i)) {
-        spoiler = Boolean(matches[1]);
+        spoiler = spoiler || Boolean(matches[1]);
         searchText = matches[2];
         animated = true;
       } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/i)) {
@@ -71,6 +74,8 @@ export default (client) => {
             message.channel.send(`|| ${imageUrl} ||`);
           } else {
             const embed = new Discord.RichEmbed()
+              .setTitle(searchText)
+              .setURL(imageUrl)
               .setImage(imageUrl);
             message.channel.send(embed);
           }
