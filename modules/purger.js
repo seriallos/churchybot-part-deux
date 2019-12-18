@@ -60,7 +60,7 @@ export default client => {
   client.on('ready', () => {
     // start purger task
     _.each(CHANNELS, channel => {
-      console.log(`purger: started ${channelName} purger, ttl ${channel.ttl}`);
+      console.log(`purger: started ${channel.name} purger, ttl ${channel.ttl}`);
       purge(client, channel.name, channel.ttl, channel.topic);
     });
   });
