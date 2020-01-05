@@ -36,7 +36,7 @@ export default (client) => {
       } catch (error) {
         // stop all typing, not just a single count
         message.channel.stopTyping(true);
-        message.channel.send('A SuckBot error has occurred: ', error.message);
+        message.channel.send(`A SuckBot error has occurred: ${error.message}`);
       }
     } else {
       const roll = 100 * _.random(0, 1, true);
