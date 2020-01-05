@@ -52,6 +52,7 @@ export default (client) => {
 
         message.channel.stopTyping();
         message.channel.send(text);
+        console.log(`suckbot: chatty rolled (${roll} rolled, threshold ${CHATTINESS})`);
       }
       } catch (error) {
         // stop all typing, not just a single count
