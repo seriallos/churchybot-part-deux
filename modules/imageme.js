@@ -22,6 +22,13 @@ export default (client) => {
     collapseChannel = guild.channels.find(c => c.name === COLLAPSE_SHIFT_CHANNEL);
   });
 
+  const makeEmbed = (searchText, imageUrl) => {
+    return new Discord.RichEmbed()
+      .setTitle(searchText)
+      .setURL(imageUrl)
+      .setImage(imageUrl);
+  };
+
   const search = async (text, animated) => {
     const start = 1 + (10 * _.random(0, 9));
     const query = {
@@ -94,8 +101,10 @@ export default (client) => {
           console.log(lastMessage);
           if (lastMessage.content) {
             await collapseChannel.send(lastMessage.content);
-          } else if (lastMessage.embeds) {
-            await collapseChannel.send(lastMessage.embeds[0]);
+          } else if (lastMessage.embeds.length > 0) {
+            const prevEmbed = lastMessage.embeds[0];
+            const embed = new Discord.RichEmbed(lastMessage.embeds[0]);
+            await collapseChannel.send(embed);
           }
           lastMessage.edit(`Collapse requested. Image moved to #${COLLAPSE_SHIFT_CHANNEL}`);
         } else {
@@ -115,10 +124,7 @@ export default (client) => {
           if (spoiler) {
             sentMessage = await message.channel.send(`|| ${imageUrl} ||`);
           } else {
-            const embed = new Discord.RichEmbed()
-              .setTitle(searchText)
-              .setURL(imageUrl)
-              .setImage(imageUrl);
+            const embed = makeEmbed(searchText, imageUrl);
             sentMessage = await message.channel.send(embed);
           }
 
