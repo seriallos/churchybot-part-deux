@@ -1,6 +1,8 @@
 import Discord from 'discord.js';
 import got from 'got';
 
+import { getChurchybotCommand } from '../util';
+
 export default (client) => {
   const PREFIXES = ['churchybot', 'suckbot'];
 
@@ -11,7 +13,7 @@ export default (client) => {
     if (message.author.bot) {
       return;
     }
-    if (message.content.match(/^talk to ?me$/)) {
+    if (getChurchybotCommand(message).match(/^talk to me$/))) {
       console.log('sentence requested');
       message.channel.startTyping();
       const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75 }});
