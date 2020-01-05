@@ -18,10 +18,10 @@ export default (client) => {
       return;
     }
     
-    if (getChurchybotCommand(message).match(/^talk to me ?(about)(.+)$/)) {
+    if (getChurchybotCommand(message).match(/^talk to me (about)?(.+)?$/)) {
       let seedText = "well, actually";
       let parts
-      if (parts = message.content.match(/^talk to me ?(about)(.+)/i)) {
+      if (parts = message.content.match(/^talk to me (about)?(.+)?/i)) {
         seedText = parts.slice[-1](0)
       }
       console.log('sentence requested');
