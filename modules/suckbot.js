@@ -17,36 +17,35 @@ export default (client) => {
     if (message.author.bot) {
       return;
     }
-    
-    if (getChurchybotCommand(message).match(/^talk to me(?: about)?(.+)?$/)) {
-      var seedText = "well, actually";
-      let parts
-      if (parts = message.content.match(/^talk to me(?: about)?(.+)?/i)) {
-        seedText = parts.slice(-1)[0]
-      }
-      console.log('sentence requested');
+
+    let matches;
+    if (matches = getChurchybotCommand(message).match(/^talk to me( about (.+))?$/)) {
+      const seedText = matches[2] || "well, actually";
+
+      console.log(`suckbot: talk to me requested, seedText: ${seedText}`);
+
       message.channel.startTyping();
       const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText }});
       const results = JSON.parse(response.body);
 
       const text = results.text;
 
-      message.channel.send(text);
       message.channel.stopTyping();
+      message.channel.send(text);
     } else {
       const roll = 100 * _.random(0, 1, true);
       if (roll < CHATTINESS) {
         message.channel.startTyping();
         // Use the last couple of words of the message as the text generation seed
         seedText = message.content.split(" ").splice(-2).join(" ")
-        
+
         const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText}});
         const results = JSON.parse(response.body);
         const text = results.text;
-        
-        message.channel.send(text);
+
         message.channel.stopTyping();
-    }
+        message.channel.send(text);
+      }
     }
   });
 }
