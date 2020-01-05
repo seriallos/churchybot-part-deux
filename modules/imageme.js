@@ -91,6 +91,7 @@ export default (client) => {
         } else if (lastMessage) {
           console.log(`imageme: ${channelName}: Collapsed last image`);
           await collapseChannel.send(`Image collapse requested from ${channelName}:`);
+          console.log(lastMessage);
           if (lastMessage.content) {
             await collapseChannel.send(lastMessage.content);
           } else if (lastMessage.embeds) {
@@ -108,6 +109,7 @@ export default (client) => {
           `imageme: ${channelName}: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`,
         );
         const results = await search(searchText, animated);
+        message.channel.startTyping();
         _.each(_.sampleSize(results, numImages), async imageUrl => {
           let sentMessage;
           if (spoiler) {
@@ -124,6 +126,7 @@ export default (client) => {
             lastChannelImageMessage[channelName] = sentMessage;
           }
         });
+        message.channel.stopTyping();
       }
     });
   }
