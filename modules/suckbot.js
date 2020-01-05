@@ -18,12 +18,8 @@ export default (client) => {
       return;
     }
     
-    let seedText = "well, actually";
-    
-    if (matches = getChurchybotCommand(message).match(/^talk ?(to me)$/)) {
-      
-      // Change seedText to anything after "about"
-      // seedText = matches.slice(-1)[0];
+    if (matches = getChurchybotCommand(message).match(/^talk to me$/)) {
+      let seedText = "well, actually";
       console.log('sentence requested');
       message.channel.startTyping();
       const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText }});
