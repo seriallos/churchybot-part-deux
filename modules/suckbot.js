@@ -13,12 +13,14 @@ export default (client) => {
     }
     if (message.content.match(/^talk to ?me$/)) {
       console.log('sentence requested');
+      message.channel.startTyping();
       const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75 }});
       const results = JSON.parse(response.body);
 
       const text = results.text;
 
       message.channel.send(text);
+      message.channel.stopTyping();
     }
   });
 }
