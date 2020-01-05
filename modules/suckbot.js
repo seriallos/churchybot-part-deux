@@ -21,7 +21,7 @@ export default (client) => {
     let matches;
     if (matches = getChurchybotCommand(message).match(/^talk to me( about (.+))?$/)) {
       try {
-        const seedText = matches[2] || "well, actually";
+        const seedText = matches[2] || '';
 
         console.log(`suckbot: talk to me requested, seedText: ${seedText}`);
 
