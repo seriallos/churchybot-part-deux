@@ -91,7 +91,11 @@ export default (client) => {
         } else if (lastMessage) {
           console.log(`imageme: ${channelName}: Collapsed last image`);
           await collapseChannel.send(`Image collapse requested from ${channelName}:`);
-          await collapseChannel.send(lastMessage.content);
+          if (lastMessage.content) {
+            await collapseChannel.send(lastMessage.content);
+          } else if (lastMessage.embeds) {
+            await collapseChannel.send(lastMessage.embeds[0]);
+          }
           lastMessage.edit(`Collapse requested. Image moved to #${COLLAPSE_SHIFT_CHANNEL}`);
         } else {
           console.log(`imageme: ${channelName}: Nothing in MRU image channel history`);
