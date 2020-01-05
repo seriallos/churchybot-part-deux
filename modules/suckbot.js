@@ -14,8 +14,7 @@ export default (client) => {
     if (message.content.match(/^talk to ?me$/)) {
       console.log('sentence requested');
       const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75 }});
-      const data = response.json();
-      const results = JSON.parse(data.body);
+      const results = JSON.parse(response.body);
 
       const text = results.text;
 
