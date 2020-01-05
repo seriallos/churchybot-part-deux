@@ -20,7 +20,8 @@ export default (client) => {
     
     let seedText = "well, actually";
     
-    if (matches = getChurchybotCommand(message).match(/^talk to me ?(about)(.+)/)) {
+    if (matches = getChurchybotCommand(message).match(/^talk to me ?(about)(.+)/i)) {
+      
       // Change seedText to anything after "about"
       seedText = matches.slice(-1)[0];
       console.log('sentence requested');
