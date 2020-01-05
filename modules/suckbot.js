@@ -39,18 +39,24 @@ export default (client) => {
         message.channel.send(`A SuckBot error has occurred: ${error.message}`);
       }
     } else {
+      try {
       const roll = 100 * _.random(0, 1, true);
       if (roll < CHATTINESS) {
-        message.channel.startTyping();
         // Use the last couple of words of the message as the text generation seed
-        seedText = message.content.split(" ").splice(-2).join(" ")
+        const seedText = message.content.split(" ").splice(-2).join(" ")
 
+        message.channel.startTyping();
         const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText}});
         const results = JSON.parse(response.body);
         const text = results.text;
 
         message.channel.stopTyping();
         message.channel.send(text);
+      }
+      } catch (error) {
+        // stop all typing, not just a single count
+        message.channel.stopTyping(true);
+        message.channel.send(`A chatty SuckBot error has occurred: ${error.message}`);
       }
     }
   });
