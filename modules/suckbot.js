@@ -22,7 +22,7 @@ export default (client) => {
       var seedText = "well, actually";
       let parts
       if (parts = message.content.match(/^talk to me(?: about)?(.+)?/i)) {
-        seedText = parts.slice[-1](0)
+        seedText = parts.slice(-1)[0]
       }
       console.log('sentence requested');
       message.channel.startTyping();
