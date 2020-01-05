@@ -99,7 +99,7 @@ export default (client) => {
           `imageme: ${channelName}: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`,
         );
         const results = await search(searchText, animated);
-        _.each(_.sampleSize(results, numImages), imageUrl => {
+        _.each(_.sampleSize(results, numImages), async imageUrl => {
           let sentMessage;
           if (spoiler) {
             sentMessage = await message.channel.send(`|| ${imageUrl} ||`);
