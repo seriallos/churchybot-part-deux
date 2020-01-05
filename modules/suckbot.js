@@ -46,5 +46,6 @@ export default (client) => {
         message.channel.send(text);
         message.channel.stopTyping();
     }
+    }
   });
 }
