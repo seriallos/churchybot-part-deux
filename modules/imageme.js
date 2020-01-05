@@ -106,7 +106,8 @@ export default (client) => {
             const embed = new Discord.RichEmbed(lastMessage.embeds[0]);
             await collapseChannel.send(embed);
           }
-          lastMessage.edit(`Collapse requested. Image moved to #${COLLAPSE_SHIFT_CHANNEL}`);
+          const emptyEmbed = new Discord.RichEmbed();
+          lastMessage.edit(`Collapse requested. Image moved to #${COLLAPSE_SHIFT_CHANNEL}`, emptyEmbed);
         } else {
           console.log(`imageme: ${channelName}: Nothing in MRU image channel history`);
           message.channel.send('Nothing to collapse (most recent already collapsed or nothing in memory)');
