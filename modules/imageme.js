@@ -97,17 +97,18 @@ export default (client) => {
           message.channel.send('Cannot collapse in this channel');
         } else if (lastMessage) {
           console.log(`imageme: ${channelName}: Collapsed last image`);
-          await collapseChannel.send(`Image collapse requested from ${channelName}:`);
-          console.log(lastMessage);
+          await collapseChannel.send(`Image collapsed from ${channelName}:`);
+          const collapseText = `Collapsed and moved to #${COLLAPSE_SHIFT_CHANNEL}`;
           if (lastMessage.content) {
             await collapseChannel.send(lastMessage.content);
+            lastMessage.edit(collapseText);
           } else if (lastMessage.embeds.length > 0) {
             const prevEmbed = lastMessage.embeds[0];
             const embed = new Discord.RichEmbed(lastMessage.embeds[0]);
             await collapseChannel.send(embed);
+            const collapsedEmbed = new Discord.RichEmbed().setTitle(collapseText);
+            lastMessage.edit(collapsedEmbed);
           }
-          const emptyEmbed = new Discord.RichEmbed();
-          lastMessage.edit(`Collapse requested. Image moved to #${COLLAPSE_SHIFT_CHANNEL}`, emptyEmbed);
         } else {
           console.log(`imageme: ${channelName}: Nothing in MRU image channel history`);
           message.channel.send('Nothing to collapse (most recent already collapsed or nothing in memory)');
