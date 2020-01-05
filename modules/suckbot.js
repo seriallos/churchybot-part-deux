@@ -18,7 +18,7 @@ export default (client) => {
       return;
     }
     
-    if (matches = getChurchybotCommand(message).match(/^talk to me$/)) {
+    if (getChurchybotCommand(message).match(/^talk to me$/)) {
       let seedText = "well, actually";
       console.log('sentence requested');
       message.channel.startTyping();
