@@ -19,7 +19,7 @@ export default (client) => {
     }
     
     if (getChurchybotCommand(message).match(/^talk to me(?: about)?(.+)?$/)) {
-      let seedText = "well, actually";
+      var seedText = "well, actually";
       let parts
       if (parts = message.content.match(/^talk to me(?: about)?(.+)?/i)) {
         seedText = parts.slice[-1](0)
