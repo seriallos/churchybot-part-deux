@@ -97,6 +97,7 @@ export default (client) => {
           message.channel.send('Cannot collapse in this channel');
         } else if (lastMessage) {
           console.log(`imageme: ${channelName}: Collapsed last image`);
+          lastChannelImageMessage[channelName] = null;
           await collapseChannel.send(`Image collapsed from ${channelName}:`);
           const collapseText = `Collapsed and moved to #${COLLAPSE_SHIFT_CHANNEL}`;
           if (lastMessage.content) {
