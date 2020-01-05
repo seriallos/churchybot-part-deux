@@ -15,8 +15,12 @@ export default (client) => {
 
   const lastChannelImageMessage  = {};
 
-  const guild = client.guilds.first();
-  const collapseChannel = guild.channels.find(c => c.name === COLLAPSE_SHIFT_CHANNEL);
+  let collapseChannel;
+
+  client.on('ready', () => {
+    const guild = client.guilds.first();
+    collapseChannel = guild.channels.find(c => c.name === COLLAPSE_SHIFT_CHANNEL);
+  });
 
   const search = async (text, animated) => {
     const start = 1 + (10 * _.random(0, 9));
