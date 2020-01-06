@@ -74,16 +74,13 @@ export default (client) => {
       let animated = false;
       let canCollapse = channelName !== COLLAPSE_SHIFT_CHANNEL;
       let spoiler = _.includes(SPOILER_CHANNELS, channelName);
-      let selfEmbed = false;
 
-      if (matches = message.content.match(/^(spoiler )?image (embed )?me (.+)/i)) {
+      if (matches = message.content.match(/^(spoiler )?image me (.+)/i)) {
         spoiler = spoiler || Boolean(matches[1]);
-        selfEmbed = Boolean(matches[2]);
-        searchText = matches[3];
-      } else if (matches = message.content.match(/^(spoiler )?animate (embed )?me (.+)/i)) {
+        searchText = matches[2];
+      } else if (matches = message.content.match(/^(spoiler )?animate me (.+)/i)) {
         spoiler = spoiler || Boolean(matches[1]);
-        selfEmbed = Boolean(matches[2]);
-        searchText = matches[3];
+        searchText = matches[2];
         animated = true;
       } else if (matches = message.content.match(/^(pug|pika|kitty) ?bomb$/i)) {
         const searchMap = {
@@ -130,13 +127,8 @@ export default (client) => {
           if (spoiler) {
             sentMessage = await message.channel.send(`|| ${imageUrl} ||`);
           } else {
-            if (!selfEmbed) {
-              const embed = makeEmbed(searchText, imageUrl);
-              sentMessage = await message.channel.send(embed);
-            } else {
-              message.edit(message.content, makeEmbed(searchText, imageUrl));
-              sentMessage = message;
-            }
+            const embed = makeEmbed(searchText, imageUrl);
+            sentMessage = await message.channel.send(embed);
           }
 
           if (canCollapse) {
