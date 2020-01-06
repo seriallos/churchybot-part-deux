@@ -24,9 +24,8 @@ export default (client) => {
       try {
         let seedText = '';
         let temp = 0.75;
-        if (matches.length <= 2){
-          seedText = matches[2] || '';
-        } else if (matches[1] === "crazy") {
+        seedText = matches[3] || '';
+        if (matches[1] === "crazy ") {
           temp = 0.99;
           seedText = matches[3] || '';
         }
