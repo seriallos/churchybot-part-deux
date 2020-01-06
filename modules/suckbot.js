@@ -26,12 +26,12 @@ export default (client) => {
         let seedText = '';
         if (matches.length <= 2){
           seedText = matches[2] || '';
-        } else if (matches[0] === "crazy") {
+        } else if (matches[1] === "crazy") {
           temp = 0.99;
           seedText = matches[3] || '';
         }
 
-        console.log(`suckbot: talk to me requested, seedText: ${seedText}`);
+        console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}`);
 
         message.channel.startTyping();
         const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: 0.75, prefix: seedText }});
