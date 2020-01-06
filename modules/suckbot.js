@@ -34,7 +34,7 @@ export default (client) => {
         console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}`);
 
         message.channel.startTyping();
-        const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: 0.75, prefix: seedText }});
+        const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: temp, prefix: seedText }});
         const results = JSON.parse(response.body);
 
         let text = results.text;
