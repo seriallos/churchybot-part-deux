@@ -51,7 +51,7 @@ export default async (client) => {
     } else {
       const roll = 100 * _.random(0, 1, true);
       if (roll < OOC_CHANCE_PCT) {
-        const quote = _.sample(quotes);
+        const quote = _.trim(_.sample(quotes), '"');
         if (quote) {
           message.channel.send(`"${quote.quote}" - ${quote.speaker}`);
           console.log(`ooc: random quote rolled (${roll} rolled, threshold ${OOC_CHANCE_PCT})`);
