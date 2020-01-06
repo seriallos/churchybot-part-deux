@@ -23,7 +23,7 @@ export default (client) => {
     
     if (matches = getChurchybotCommand(message).match(/^(crazy )?talk to me( about (.+))?$/)) {
       try {
-        if (len(matches) <= 2){
+        if (matches.length <= 2){
           const seedText = matches[2] || '';
         } else if (matches[0] === "crazy") {
           temp = 0.99;
