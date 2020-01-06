@@ -120,8 +120,8 @@ export default (client) => {
         console.log(
           `imageme: ${channelName}: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`,
         );
-        const results = await search(searchText, animated);
         message.channel.startTyping();
+        const results = await search(searchText, animated);
         _.each(_.sampleSize(results, numImages), async imageUrl => {
           let sentMessage;
           if (spoiler) {
