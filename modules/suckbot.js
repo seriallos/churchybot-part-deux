@@ -31,7 +31,7 @@ export default (client) => {
           seedText = matches[3] || '';
         }
 
-        console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}, match1: ${matches[1])`);
+        console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}`);
 
         message.channel.startTyping();
         const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: temp, prefix: seedText }});
