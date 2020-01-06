@@ -16,7 +16,7 @@ export default (client) => {
     prefix = '',
     length = 60,
     nsamples = 1,
-    temperature: 0.75,
+    temperature = 0.75,
   }) => {
     const response = await got.post(url, {json: {length, nsamples, temperature, prefix }});
     const results = JSON.parse(response.body);
