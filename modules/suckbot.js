@@ -19,11 +19,11 @@ export default (client) => {
     }
 
     let matches;
-    let temp = 0.75;
     
     if (matches = getChurchybotCommand(message).match(/^(crazy )?talk to me( about (.+))?$/)) {
       try {
         let seedText = '';
+        let temp = 0.75;
         if (matches.length <= 2){
           seedText = matches[2] || '';
         } else if (matches[1] === "crazy") {
@@ -31,7 +31,7 @@ export default (client) => {
           seedText = matches[3] || '';
         }
 
-        console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}`);
+        console.log(`suckbot: talk to me requested, seedText: ${seedText}, temperature: ${temp}, match1: ${matches[1])`);
 
         message.channel.startTyping();
         const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: temp, prefix: seedText }});
