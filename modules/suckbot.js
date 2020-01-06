@@ -26,10 +26,13 @@ export default (client) => {
         console.log(`suckbot: talk to me requested, seedText: ${seedText}`);
 
         message.channel.startTyping();
-        const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText }});
+        const response = await got.post(url, {json: {length: 60, nsamples: 1, temperature: 0.75, prefix: seedText }});
         const results = JSON.parse(response.body);
 
-        const text = results.text;
+        let text = results.text;
+
+        // find last period and trim any hanging text
+        text = text.substring(0, text.lastIndexOf('.'));
 
         message.channel.stopTyping();
         message.channel.send(text);
