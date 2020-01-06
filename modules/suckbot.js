@@ -32,7 +32,7 @@ export default (client) => {
         let text = results.text;
 
         // find last period and trim any hanging text
-        text = text.substring(0, text.lastIndexOf('.'));
+        text = text.substring(0, 1 + text.lastIndexOf('.'));
 
         message.channel.stopTyping();
         message.channel.send(text);
