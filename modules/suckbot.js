@@ -19,9 +19,16 @@ export default (client) => {
     }
 
     let matches;
-    if (matches = getChurchybotCommand(message).match(/^talk to me( about (.+))?$/)) {
+    let temp = 0.75;
+    
+    if (matches = getChurchybotCommand(message).match(/^(crazy )?talk to me( about (.+))?$/)) {
       try {
-        const seedText = matches[2] || '';
+        if (len(matches) <= 2){
+          const seedText = matches[2] || '';
+        } else if (matches[0] === "crazy") {
+          temp = 0.99;
+          const seedText = matches[3] || '';
+        }
 
         console.log(`suckbot: talk to me requested, seedText: ${seedText}`);
 
@@ -32,7 +39,7 @@ export default (client) => {
         let text = results.text;
 
         // find last period and trim any hanging text
-        text = text.substring(0, 1 + text.lastIndexOf('.'));
+        text = text.substring(0, text.lastIndexOf('.'));
 
         message.channel.stopTyping();
         message.channel.send(text);
@@ -49,7 +56,7 @@ export default (client) => {
         const seedText = message.content.split(" ").splice(-2).join(" ")
 
         message.channel.startTyping();
-        const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: 0.75, prefix: seedText}});
+        const response = await got.post(url, {json: {length: 45, nsamples: 1, temperature: temp, prefix: seedText}});
         const results = JSON.parse(response.body);
         const text = results.text;
 
