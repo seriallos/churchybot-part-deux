@@ -5,8 +5,8 @@ export default client => {
     const command = getChurchybotCommand(message);
     if (command === 'die') {
       console.log('die requested');
-      message.channel.send('Restarting bot in 5 seconds...');
-      setTimeout(() => process.exit(0), 5 * 1000);
+      message.channel.send('Restarting bot...');
+      setTimeout(() => process.exit(0), 1 * 1000);
     }
   });
 }
