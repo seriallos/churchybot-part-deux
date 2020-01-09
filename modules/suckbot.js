@@ -62,7 +62,7 @@ export default (client) => {
       }
     } else {
       try {
-      const roll = _.random(0, 100, true);
+      const roll = 100 * _.random(0, 1, true);
       if (roll < CHATTINESS) {
         console.log(`suckbot: chatty rolled (${roll} rolled, threshold ${CHATTINESS})`);
 
