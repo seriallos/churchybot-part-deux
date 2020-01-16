@@ -7,10 +7,23 @@ import _ from 'lodash';
 
 const PURGE_INTERVAL = 5 * 60 * 1000;
 
+const niceTime = seconds => {
+  const minutes = _.round(seconds / 60);
+  const hours = _.round(minutes / 60);
+  const days = _.round(hours / 24);
+  if (days > 0) {
+    return `${days} day${days !== 1 ? 's' : ''}`;
+  } else if (hours > 0) {
+    return `${hours} hour{hours !== 1 ? 's' : ''}`;
+  } else if (minutes > 0) {
+    return `${minutes} minute{minutes !== 1 ? 's' : ''}`;
+  }
+  return `${seconds} second{seconds !== 1 ? 's' : ''}`;
+};
+
 const CHANNELS = [{
   name: 'burn-after-reading',
   ttl: 48 * 60 * 60,
-  topic: 'Messages self destruct after 24 hours',
 }, {
   name: 'image-me-roulette',
   ttl: 48 * 60 * 60,
@@ -24,7 +37,7 @@ const purge = async (client, channelName, ttl, topic) => {
     return;
   }
 
-  channel.setTopic(topic || `This channel automatically deletes messages after ${ttl / 60} minutes`);
+  channel.setTopic(topic || `This channel automatically deletes messages after ${niceTime(ttl)}`);
 
   const options = {
     limit: 50,
