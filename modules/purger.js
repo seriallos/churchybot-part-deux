@@ -9,11 +9,11 @@ const PURGE_INTERVAL = 5 * 60 * 1000;
 
 const CHANNELS = [{
   name: 'burn-after-reading',
-  ttl: 24 * 60 * 60,
+  ttl: 48 * 60 * 60,
   topic: 'Messages self destruct after 24 hours',
 }, {
   name: 'image-me-roulette',
-  ttl: 60 * 60,
+  ttl: 48 * 60 * 60,
 }];
 
 const purge = async (client, channelName, ttl, topic) => {
