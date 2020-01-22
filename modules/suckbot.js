@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { getChurchybotCommand } from '../util';
 
 // Control how often the bot spouts off at random
-const CHATTINESS = 0.5;
+const CHATTINESS = 0.1;
 
 export default (client) => {
   const PREFIXES = ['churchybot', 'suckbot'];
