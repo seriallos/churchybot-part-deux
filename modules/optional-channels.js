@@ -20,11 +20,9 @@ export default client => {
       let role = guild.roles.find(r => r.name === roleName);
       if (!role) {
         console.log(`Creating role ${roleName}`);
-        /*
         role = await guild.createRole({
           name: roleName,
         });
-        */
       } else {
         console.log(`Role ${roleName} already exists`);
       }
