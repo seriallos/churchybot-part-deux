@@ -52,7 +52,4 @@ export default client => {
 
     ensureGuild(guild);
   });
-
-  client.on('channelUpdate', (oldChannel, newChannel) => ensureChannel(newChannel));
-  client.on('channelCreate', ensureChannel);
 }
