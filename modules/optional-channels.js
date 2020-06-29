@@ -6,6 +6,8 @@ export default client => {
   client.on('ready', () => {
     const guild = client.guilds.first();
 
+    console.log(guild.roles);
+
     // find optional channels
     const category = guild.channels.find(c => c.name === OPTIONAL_CATEGORY);
     const channels = guild.channels.filter(c => {
@@ -27,12 +29,19 @@ export default client => {
         console.log(`Role ${roleName} already exists`);
       }
 
-      // ensure this channel is only visible to this role
+      // ensure channel is private
+      /*
+      c.overwritePermissions(role, {
+        READ_MESSAGES: false,
+        VIEW_CHANNEL: false,
+      });
+      */
+
+      // ensure channel can be seen by the role
       c.overwritePermissions(role, {
         READ_MESSAGES: true,
         VIEW_CHANNEL: true,
       });
     });
-
   });
 }
