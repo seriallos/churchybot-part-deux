@@ -26,7 +26,7 @@ export default client => {
         });
         */
       } else {
-        console.log('Role ${roleName} already exists');
+        console.log(`Role ${roleName} already exists`);
       }
 
       // ensure this channel is only visible to this role
