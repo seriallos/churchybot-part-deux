@@ -2,18 +2,20 @@ const OPTIONAL_CATEGORY = 'Optional Channels';
 
 const ROLE_CHANNEL = 'channel-setup';
 
+const log = (...msg) => console.log('optchan: ', ...msg);
+
 const ensureChannel = async channel => {
   if (channel.parent && channel.parent.name === OPTIONAL_CATEGORY && channel.name !== ROLE_CHANNEL) {
-    console.log(`Ensuring optional channel "${channel.name}" permissions`);
+    log(`Ensuring optional channel "${channel.name}" permissions`);
     const roleName = `c:${channel.name}`;
     let role = channel.guild.roles.find(r => r.name === roleName);
     if (!role) {
-      console.log(`Creating role ${roleName}`);
+      log(`Creating role ${roleName}`);
       role = await channel.guild.createRole({
         name: roleName,
       });
     } else {
-      console.log(`Role ${roleName} already exists`);
+      log(`Role ${roleName} already exists`);
     }
 
     // ensure channel is private
@@ -31,7 +33,7 @@ const ensureChannel = async channel => {
 
     // ensure appropriate reaction exists in ROLE_CHANNEL
   } else {
-    console.log(`${channel.name} is not an optional channel, skipping ensure`);
+    log(`${channel.name} is not an optional channel, skipping ensure`);
   }
 };
 
@@ -52,4 +54,14 @@ export default client => {
 
     ensureGuild(guild);
   });
+
+  client.on('channelUpdate', (oldChannel, newChannel) => {
+    // only ensure if the channel has moved parents
+    // blindly ensuring on channelUpdate results in infinite recursion
+    if (oldChannel.parentID !== newChannel.parentID) {
+      log(`${newChannel.name} has moved parents, running ensureChannel`);
+      ensureChannel(newChannel)}
+    }
+  );
+  client.on('channelCreate', ensureChannel);
 }
