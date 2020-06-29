@@ -9,6 +9,8 @@ console.log('ChurchyBot starting');
 
 const MODULES_DIR = path.join(__dirname, 'modules');
 
+const LOG_CHANNEL = 'developers-developers';
+
 async function main() {
   // check for valid environment
   const TOKEN = process.env.CHURCHYBOT_DISCORD_TOKEN;
@@ -48,12 +50,10 @@ async function main() {
   client.on('ready', () => {
     console.log('Discord client ready');
     const guild = client.guilds.first();
-    devChannel = guild.channels.find(c => c.name === 'bot-spam');
+    devChannel = guild.channels.find(c => c.name === LOG_CHANNEL);
     if (!started) {
       devLog('Bot started');
       started = true;
-    } else {
-      devLog('Bot reconnected');
     }
   });
   client.on('error', error => {
