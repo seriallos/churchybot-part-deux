@@ -2,20 +2,22 @@ const OPTIONAL_CATEGORY = 'Optional Channels';
 
 const ROLE_CHANNEL = 'channel-setup';
 
-const log = (...msg) => console.log('optchan: ', ...msg);
+const log = (...msg) => console.log('optchan:', ...msg);
+
+const getRoleName = channel => `c:${channel.name}`;
 
 const ensureChannel = async channel => {
   if (channel.parent && channel.parent.name === OPTIONAL_CATEGORY && channel.name !== ROLE_CHANNEL) {
     log(`Ensuring optional channel "${channel.name}" permissions`);
-    const roleName = `c:${channel.name}`;
+    const roleName = getRoleName(channel);
     let role = channel.guild.roles.find(r => r.name === roleName);
     if (!role) {
-      log(`Creating role ${roleName}`);
+      log(`Creating role "${roleName}"`);
       role = await channel.guild.createRole({
         name: roleName,
-      });
+      }, 'Optional channel role creation');
     } else {
-      log(`Role ${roleName} already exists`);
+      log(`Role "${roleName}" already exists`);
     }
 
     // ensure channel is private
@@ -23,17 +25,17 @@ const ensureChannel = async channel => {
     channel.overwritePermissions(everyone, {
       READ_MESSAGES: false,
       VIEW_CHANNEL: false,
-    });
+    }, 'Ensure optional channel is private');
 
     // ensure channel can be seen by the role
     channel.overwritePermissions(role, {
       READ_MESSAGES: true,
       VIEW_CHANNEL: true,
-    });
+    }, 'Ensure optional channel role can view');
 
     // ensure appropriate reaction exists in ROLE_CHANNEL
   } else {
-    log(`${channel.name} is not an optional channel, skipping ensure`);
+    log(`"${channel.name}" is not an optional channel, skipping ensure`);
   }
 };
 
@@ -59,9 +61,20 @@ export default client => {
     // only ensure if the channel has moved parents
     // blindly ensuring on channelUpdate results in infinite recursion
     if (oldChannel.parentID !== newChannel.parentID) {
-      log(`${newChannel.name} has moved parents, running ensureChannel`);
+      log(`"${newChannel.name}" has moved parents, running ensureChannel`);
       ensureChannel(newChannel)}
     }
   );
-  client.on('channelCreate', ensureChannel);
+  client.on('channelCreate', channel => {
+    log(`New channel "${channel.name}" created, running ensureChannel`);
+    ensureChannel(channel)
+  });
+  client.on('channelDelete', channel => {
+    // delete role name if it exists
+    const roleName = getRoleName(channel);
+    const role = channel.guild.roles.find(r => r.name === roleName);
+    if (role) {
+      role.delete('Optional channel was deleted, cleaning up connected role');
+    }
+  });
 }
