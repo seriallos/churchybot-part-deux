@@ -9,7 +9,7 @@ export default client => {
     // find optional channels
     const category = guild.channels.find(c => c.name === OPTIONAL_CATEGORY);
     const channels = guild.channels.filter(c => {
-      return c.parent.name === OPTIONAL_CATEGORY && c.name !== ROLE_CHANNEL;
+      return c.parent && c.parent.name === OPTIONAL_CATEGORY && c.name !== ROLE_CHANNEL;
     });
 
     console.log(channels);
