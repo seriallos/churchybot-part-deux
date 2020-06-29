@@ -18,13 +18,13 @@ const ensureChannel = async channel => {
 
     // ensure channel is private
     const everyone = channel.guild.roles.find(r => r.name === '@everyone');
-    c.overwritePermissions(everyone, {
+    channel.overwritePermissions(everyone, {
       READ_MESSAGES: false,
       VIEW_CHANNEL: false,
     });
 
     // ensure channel can be seen by the role
-    c.overwritePermissions(role, {
+    channel.overwritePermissions(role, {
       READ_MESSAGES: true,
       VIEW_CHANNEL: true,
     });
@@ -53,6 +53,6 @@ export default client => {
     ensureGuild(guild);
   });
 
-  client.on('channelUpdate', (oldChannel, newChannel) => console.log('channel update', newChannel));
-  client.on('channelCreate', (channel) => console.log('channel create', newChannel));
+  client.on('channelUpdate', (oldChannel, newChannel) => ensureChannel(newChannel));
+  client.on('channelCreate', ensureChannel);
 }
