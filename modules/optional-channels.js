@@ -5,8 +5,7 @@ const ROLE_CHANNEL = 'channel-setup';
 export default client => {
   client.on('ready', () => {
     const guild = client.guilds.first();
-
-    console.log(guild.roles);
+    const everyone = guild.roles.find(r => r.name === '@everyone');
 
     // find optional channels
     const category = guild.channels.find(c => c.name === OPTIONAL_CATEGORY);
@@ -14,10 +13,9 @@ export default client => {
       return c.parent && c.parent.name === OPTIONAL_CATEGORY && c.name !== ROLE_CHANNEL;
     });
 
-    console.log(channels);
-
     // ensure roles exist for these channels
     channels.every(async c => {
+      console.log(`Ensuring optional channel "${c.name}" permissions`);
       const roleName = `c:${c.name}`;
       let role = guild.roles.find(r => r.name === roleName);
       if (!role) {
@@ -30,12 +28,10 @@ export default client => {
       }
 
       // ensure channel is private
-      /*
-      c.overwritePermissions(role, {
+      c.overwritePermissions(everyone, {
         READ_MESSAGES: false,
         VIEW_CHANNEL: false,
       });
-      */
 
       // ensure channel can be seen by the role
       c.overwritePermissions(role, {
