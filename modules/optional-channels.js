@@ -28,12 +28,10 @@ export default client => {
       }
 
       // ensure this channel is only visible to this role
-      /*
       c.overwritePermissions(role, {
         READ_MESSAGES: true,
         VIEW_CHANNEL: true,
       });
-      */
     });
 
   });
