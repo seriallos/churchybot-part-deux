@@ -4,8 +4,8 @@ const ROLE_CHANNEL = 'channel-setup';
 
 const ensureChannel = async channel => {
   if (channel.parent && channel.parent.name === OPTIONAL_CATEGORY && channel.name !== ROLE_CHANNEL) {
-    console.log(`Ensuring optional channel "${c.name}" permissions`);
-    const roleName = `c:${c.name}`;
+    console.log(`Ensuring optional channel "${channel.name}" permissions`);
+    const roleName = `c:${channel.name}`;
     let role = channel.guild.roles.find(r => r.name === roleName);
     if (!role) {
       console.log(`Creating role ${roleName}`);
