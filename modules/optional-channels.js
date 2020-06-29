@@ -74,6 +74,7 @@ export default client => {
     const roleName = getRoleName(channel);
     const role = channel.guild.roles.find(r => r.name === roleName);
     if (role) {
+      log('Deleting role for an optional channel');
       role.delete('Optional channel was deleted, cleaning up connected role');
     }
   });
