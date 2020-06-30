@@ -15,7 +15,7 @@ const load = async () => {
 };
 
 const save = async (db) => {
-  const data = JSON.stringify(db);
+  const data = JSON.stringify(db, null, 2);
   await fs.promises.writeFile(DB_FILE, data);
 }
 
@@ -127,8 +127,14 @@ export default async client => {
 
       const reactionInfo = _.find(dbData, { key: channel.name });
       const setupChannel = channel.guild.channels.find(c => c.name === ROLE_CHANNEL);
-      const message = await setupChannel.fetchMessage(reactionInfo.message);
-      message.delete();
+      try {
+        const message = await setupChannel.fetchMessage(reactionInfo.message);
+        if (message) {
+          message.delete();
+        }
+      } catch (error) {
+        log(`Error! Unable to delete reaction message for ${channel.name}:`, error.message);
+      }
 
       delete dbData[channel.name];
       await save(dbData);
