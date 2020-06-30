@@ -117,7 +117,7 @@ export default async client => {
     log(`New channel "${channel.name}" created, running ensureChannel`);
     ensureChannel(channel)
   });
-  client.on('channelDelete', channel => {
+  client.on('channelDelete', async (channel) => {
     // delete role name if it exists
     const roleName = getRoleName(channel);
     const role = channel.guild.roles.find(r => r.name === roleName);
