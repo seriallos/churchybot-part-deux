@@ -86,6 +86,8 @@ export default async client => {
     setupChannel.overwritePermissions(everyone, {
       SEND_MESSAGES: false,
     }, 'Ensure setup channel is not public writable');
+
+    setupChannel.fetchMessages({ limit: 100 });
   };
 
   client.on('ready', () => {
@@ -114,5 +116,14 @@ export default async client => {
       log('Deleting role for an optional channel');
       role.delete('Optional channel was deleted, cleaning up connected role');
     }
+  });
+
+  client.on('messageReactionAdd', async (reaction, user) => {
+    console.log('reaction added');
+    console.log(reaction);
+  });
+  client.on('messageReactionRemove', async (reaction, user) => {
+    console.log('reaction removed');
+    console.log(reaction);
   });
 }
