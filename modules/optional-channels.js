@@ -135,7 +135,8 @@ export default async client => {
       const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
-      const member = guild.fetchMember(user);
+      const member = guild.fetchMember(user.id);
+      console.log(member);
       member.addRole(role);
     }
   });
@@ -147,7 +148,7 @@ export default async client => {
       const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
       log(`Removing ${roleName} from ${user.username}`);
-      const member = guild.fetchMember(user);
+      const member = guild.fetchMember(user.id);
       member.removeRole(role);
     }
   });
