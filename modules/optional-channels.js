@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import _ from 'lodash';
+
 const OPTIONAL_CATEGORY = 'Optional Channels';
 
 const ROLE_CHANNEL = 'channel-setup';
@@ -24,6 +26,12 @@ export default async client => {
   const dbData = await load();
 
   const getRoleName = channel => `c:${channel.name}`;
+
+  const getRole = channel => channel.guild.roles.find(r => r.name === getRoleName(channel));
+
+  const getReactionChannel = reaction => {
+    return _.find(dbData, { message: reaction.message.id });
+  };
 
   const ensureChannel = async channel => {
     const guild = channel.guild;
@@ -62,6 +70,7 @@ export default async client => {
         dbData[channel.name] = {
           message: message.id,
           reaction: reaction.id,
+          key: channel.name,
         };
         await save(dbData);
       }
@@ -119,11 +128,21 @@ export default async client => {
   });
 
   client.on('messageReactionAdd', async (reaction, user) => {
-    console.log('reaction added');
-    console.log(reaction);
+    const channel = getReactionChannel(reaction);
+    if (channel) {
+      const roleName = getRoleName(channel);
+      const role = reaction.channel.guild.roles.find(r => r.name === roleName);
+      log(`Adding ${roleName} to ${user.username}`);
+      user.addRole(role);
+    }
   });
   client.on('messageReactionRemove', async (reaction, user) => {
-    console.log('reaction removed');
-    console.log(reaction);
+    const channel = getReactionChannel(reaction);
+    if (channel) {
+      const roleName = getRoleName(channel);
+      const role = reaction.channel.guild.roles.find(r => r.name === roleName);
+      log(`Removing ${roleName} from ${user.username}`);
+      user.removeRole(role);
+    }
   });
 }
