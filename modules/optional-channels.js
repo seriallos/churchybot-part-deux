@@ -131,7 +131,7 @@ export default async client => {
     const channel = getReactionChannel(reaction);
     if (channel) {
       const roleName = getRoleName(channel);
-      const role = reaction.channel.guild.roles.find(r => r.name === roleName);
+      const role = reaction.message.channel.guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
       user.addRole(role);
     }
@@ -140,7 +140,7 @@ export default async client => {
     const channel = getReactionChannel(reaction);
     if (channel) {
       const roleName = getRoleName(channel);
-      const role = reaction.channel.guild.roles.find(r => r.name === roleName);
+      const role = reaction.message.channel.guild.roles.find(r => r.name === roleName);
       log(`Removing ${roleName} from ${user.username}`);
       user.removeRole(role);
     }
