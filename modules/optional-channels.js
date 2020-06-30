@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 const OPTIONAL_CATEGORY = 'Optional Channels';
 
 const ROLE_CHANNEL = 'channel-setup';
