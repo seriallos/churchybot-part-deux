@@ -124,6 +124,11 @@ export default async client => {
     if (role) {
       log('Deleting role for an optional channel');
       role.delete('Optional channel was deleted, cleaning up connected role');
+
+      const reactionInfo = _.find(dbData, { key: channel.name });
+      const setupChannel = channel.guild.channels.find(c => c.name === ROLE_CHANNEL);
+      const message = await setupChannel.fetchMessage(reactionInfo.message);
+      message.delete();
     }
   });
 
@@ -136,7 +141,6 @@ export default async client => {
       const role = guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
       const member = await guild.fetchMember(user.id);
-      console.log(member);
       member.addRole(role);
     }
   });
