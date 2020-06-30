@@ -131,7 +131,8 @@ export default async client => {
     const reactionChannel = getReactionChannel(reaction);
     if (reactionChannel) {
       const guild = reaction.message.channel.guild;
-      const roleName = getRoleName(reactionChannel.key);
+      const channel = guild.channels.find(c => c.name === reactionChannel.key);
+      const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
       const member = guild.fetchMember(user);
@@ -142,7 +143,8 @@ export default async client => {
     const reactionChannel = getReactionChannel(reaction);
     if (reactionChannel) {
       const guild = reaction.message.channel.guild;
-      const roleName = getRoleName(reactionChannel.key);
+      const channel = guild.channels.find(c => c.name === reactionChannel.key);
+      const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
       log(`Removing ${roleName} from ${user.username}`);
       const member = guild.fetchMember(user);
