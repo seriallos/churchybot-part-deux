@@ -129,6 +129,9 @@ export default async client => {
       const setupChannel = channel.guild.channels.find(c => c.name === ROLE_CHANNEL);
       const message = await setupChannel.fetchMessage(reactionInfo.message);
       message.delete();
+
+      delete dbData[channel.name];
+      await save(dbData);
     }
   });
 
