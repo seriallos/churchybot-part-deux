@@ -20,6 +20,7 @@ const save = async (db) => {
 const log = (...msg) => console.log('optchan:', ...msg);
 
 export default async client => {
+  log('Loading optchan databse');
   const dbData = await load();
 
   const getRoleName = channel => `c:${channel.name}`;
@@ -55,6 +56,14 @@ export default async client => {
       if (!dbData[channel.name]) {
         // ensure appropriate reaction exists in ROLE_CHANNEL
         log(`Create message and reaction for ${channel.name}`);
+        const setupChannel = guild.channels.find(c => c.name === ROLE_CHANNEL);
+        const message = await setupChannel.send(`${channel.name}`);
+        const reaction = await message.react('✅');
+        dbData[channel.name] = {
+          message: message.id,
+          reaction: reaction.id,
+        };
+        await save(dbData);
       }
     } else {
       log(`"${channel.name}" is not an optional channel, skipping ensure`);
@@ -70,6 +79,13 @@ export default async client => {
 
     // ensure roles exist for these channels
     channels.every(ensureChannel);
+
+    // Disable most posting in the setup channel
+    const setupChannel = guild.channels.find(c => c.name === ROLE_CHANNEL);
+    const everyone = guild.roles.find(r => r.name === '@everyone');
+    setupChannel.overwritePermissions(everyone, {
+      SEND_MESSAGES: false,
+    }, 'Ensure setup channel is not public writable');
   };
 
   client.on('ready', () => {
