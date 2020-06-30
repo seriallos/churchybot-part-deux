@@ -136,7 +136,7 @@ export default async client => {
       const role = guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
       const member = guild.fetchMember(user);
-      memeber.addRole(role);
+      member.addRole(role);
     }
   });
   client.on('messageReactionRemove', async (reaction, user) => {
@@ -148,7 +148,7 @@ export default async client => {
       const role = guild.roles.find(r => r.name === roleName);
       log(`Removing ${roleName} from ${user.username}`);
       const member = guild.fetchMember(user);
-      memeber.removeRole(role);
+      member.removeRole(role);
     }
   });
 }
