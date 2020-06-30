@@ -128,6 +128,7 @@ export default async client => {
   });
 
   client.on('messageReactionAdd', async (reaction, user) => {
+    console.log(user);
     const channel = getReactionChannel(reaction);
     if (channel) {
       const roleName = getRoleName(channel);
