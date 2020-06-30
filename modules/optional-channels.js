@@ -128,22 +128,25 @@ export default async client => {
   });
 
   client.on('messageReactionAdd', async (reaction, user) => {
-    console.log(user);
-    const channel = getReactionChannel(reaction);
-    if (channel) {
-      const roleName = getRoleName(channel);
-      const role = reaction.message.channel.guild.roles.find(r => r.name === roleName);
+    const reactionChannel = getReactionChannel(reaction);
+    if (reactionChannel) {
+      const guild = reaction.message.channel.guild;
+      const roleName = getRoleName(reactionChannel.key);
+      const role = guild.roles.find(r => r.name === roleName);
       log(`Adding ${roleName} to ${user.username}`);
-      user.addRole(role);
+      const member = guild.fetchMember(user);
+      memeber.addRole(role);
     }
   });
   client.on('messageReactionRemove', async (reaction, user) => {
-    const channel = getReactionChannel(reaction);
-    if (channel) {
-      const roleName = getRoleName(channel);
-      const role = reaction.message.channel.guild.roles.find(r => r.name === roleName);
+    const reactionChannel = getReactionChannel(reaction);
+    if (reactionChannel) {
+      const guild = reaction.message.channel.guild;
+      const roleName = getRoleName(reactionChannel.key);
+      const role = guild.roles.find(r => r.name === roleName);
       log(`Removing ${roleName} from ${user.username}`);
-      user.removeRole(role);
+      const member = guild.fetchMember(user);
+      memeber.removeRole(role);
     }
   });
 }
