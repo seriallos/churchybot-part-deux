@@ -89,10 +89,10 @@ export default (client) => {
           message.channel.send(embed);
         } else if (message) {
           let msg;
-          if (_.isArray(message)) {
-            msg = _.sample(message);
-          } else {
+          if (_.isString(message)) {
             msg = message;
+          } else if (_.isArray(message)) {
+            msg = _.sample(message);
           }
           message.channel.send(msg);
         }
