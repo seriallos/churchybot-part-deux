@@ -75,8 +75,7 @@ export default (client) => {
       return;
     }
     try {
-      console.log('input:', message.content);
-      _.each(triggers, ({ listen, text, image }) => {
+      _.each(triggers, async ({ listen, text, image }) => {
         let match = false;
         if (_.isRegExp(listen) && listen.test(message.content)) {
           match = true;
@@ -84,7 +83,7 @@ export default (client) => {
           match = true;
         }
         if (match) {
-          console.log('matched', listen);
+          console.log('quips: matched', listen, message.content);
           let msg;
           if (image) {
             if (_.isArray(image)) {
@@ -92,9 +91,10 @@ export default (client) => {
             } else {
               msg = image;
             }
-            console.log('sending image embed');
+            console.log('quips: sending image embed');
             const embed = makeEmbed(msg);
-            message.channel.send(embed);
+            await message.channel.send(embed);
+            console.log('quips: sent image embed');
           } else if (text) {
             let msg;
             if (_.isString(text)) {
@@ -102,15 +102,16 @@ export default (client) => {
             } else if (_.isArray(text)) {
               msg = _.sample(text);
             }
-            console.log('sending text');
-            message.channel.send(msg);
+            console.log('quips: sending text');
+            await message.channel.send(msg);
+            console.log('quips: sent text');
           }
           return false;
         }
         return true;
       });
     } catch (error) {
-      console.error('Exception thrown:', error.message);
+      console.error('quipc: exception', error.message);
       console.error(error);
     }
   });
