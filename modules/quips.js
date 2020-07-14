@@ -32,7 +32,7 @@ export default (client) => {
           msg = response;
         }
         const embed = makeEmbed(imageUrl);
-        sentMessage = await message.channel.send(embed);
+        message.channel.send(embed);
         return false;
       }
       return true;
