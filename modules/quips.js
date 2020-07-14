@@ -31,7 +31,7 @@ export default (client) => {
         } else {
           msg = response;
         }
-        const embed = makeEmbed(imageUrl);
+        const embed = makeEmbed(response);
         message.channel.send(embed);
         return false;
       }
