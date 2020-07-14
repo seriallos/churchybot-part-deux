@@ -70,6 +70,10 @@ const makeEmbed = (imageUrl) => {
 
 export default (client) => {
   client.on('message', async message => {
+    // ignore bot messages
+    if (message.author.bot) {
+      return;
+    }
     try {
       console.log('input:', message.content);
       _.each(triggers, ({ listen, text, image }) => {
