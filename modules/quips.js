@@ -56,7 +56,7 @@ const triggers = [{
   image: 'https://giphy.com/gifs/game-of-thrones-got-arya-stark-9RKLlD2oz5c7m',
 }, {
   listen: /turbine/i,
-  image: 'POWERED BY OUR FANS',
+  message: 'POWERED BY OUR FANS',
 }, {
   listen: /so say we all/i,
   image: 'https://media.giphy.com/media/NM4E1FcXQK6oE/giphy.gif',
