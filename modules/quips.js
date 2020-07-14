@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const triggers = [{
   listen: /(tv mount|mission accomplished|job well done)/i,
   response: 'https://i.imgur.com/ZidtWtL.jpg',
