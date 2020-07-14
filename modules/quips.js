@@ -56,7 +56,7 @@ const triggers = [{
   image: 'https://giphy.com/gifs/game-of-thrones-got-arya-stark-9RKLlD2oz5c7m',
 }, {
   listen: /turbine/i,
-  message: 'POWERED BY OUR FANS',
+  text: 'POWERED BY OUR FANS',
 }, {
   listen: /so say we all/i,
   image: 'https://media.giphy.com/media/NM4E1FcXQK6oE/giphy.gif',
@@ -72,7 +72,7 @@ export default (client) => {
   client.on('message', async message => {
     try {
       console.log('input:', message.content);
-      _.each(triggers, async ({ listen, message, image }) => {
+      _.each(triggers, async ({ listen, text, image }) => {
         let match = false;
         if (_.isRegExp(listen) && listen.test(message.content)) {
           match = true;
@@ -91,12 +91,12 @@ export default (client) => {
             console.log('sending image embed');
             const embed = makeEmbed(msg);
             message.channel.send(embed);
-          } else if (message) {
+          } else if (text) {
             let msg;
-            if (_.isString(message)) {
-              msg = message;
-            } else if (_.isArray(message)) {
-              msg = _.sample(message);
+            if (_.isString(text)) {
+              msg = text;
+            } else if (_.isArray(text)) {
+              msg = _.sample(text);
             }
             console.log('sending text');
             await message.channel.send(msg);
