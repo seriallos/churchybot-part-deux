@@ -72,7 +72,7 @@ export default (client) => {
   client.on('message', async message => {
     try {
       console.log('input:', message.content);
-      _.each(triggers, async ({ listen, text, image }) => {
+      _.each(triggers, ({ listen, text, image }) => {
         let match = false;
         if (_.isRegExp(listen) && listen.test(message.content)) {
           match = true;
@@ -99,7 +99,7 @@ export default (client) => {
               msg = _.sample(text);
             }
             console.log('sending text');
-            await message.channel.send(msg);
+            message.channel.send(msg);
           }
           return false;
         }
