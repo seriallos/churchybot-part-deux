@@ -1,3 +1,4 @@
+import Discord from 'discord.js';
 import _ from 'lodash';
 
 const triggers = [{
@@ -8,13 +9,19 @@ const triggers = [{
   response: 'https://i.imgur.com/Cln9dqs.png',
 }];
 
+const makeEmbed = (imageUrl) => {
+  return new Discord.RichEmbed()
+    .setURL(imageUrl)
+    .setImage(imageUrl);
+};
+
 export default (client) => {
   client.on('message', async message => {
     _.each(triggers, ({ listen, response }) => {
       let match = false;
       if (_.isRegExp(listen) && listen.test(message.content)) {
         match = true;
-      } else if (message.match(listen)) {
+      } else if (message.content.match(listen)) {
         match = true;
       }
       if (match) {
@@ -24,7 +31,8 @@ export default (client) => {
         } else {
           msg = response;
         }
-        message.channel.send(msg);
+        const embed = makeEmbed(imageUrl);
+        sentMessage = await message.channel.send(embed);
         return false;
       }
       return true;
