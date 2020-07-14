@@ -70,35 +70,44 @@ const makeEmbed = (imageUrl) => {
 
 export default (client) => {
   client.on('message', async message => {
-    _.each(triggers, ({ listen, response, image }) => {
-      let match = false;
-      if (_.isRegExp(listen) && listen.test(message.content)) {
-        match = true;
-      } else if (message.content.match(listen)) {
-        match = true;
-      }
-      if (match) {
-        let msg;
-        if (image) {
-          if (_.isArray(image)) {
-            msg = _.sample(image);
-          } else {
-            msg = image;
-          }
-          const embed = makeEmbed(msg);
-          message.channel.send(embed);
-        } else if (message) {
-          let msg;
-          if (_.isString(message)) {
-            msg = message;
-          } else if (_.isArray(message)) {
-            msg = _.sample(message);
-          }
-          message.channel.send(msg);
+    try {
+      console.log('input:', message.content);
+      _.each(triggers, async ({ listen, message, image }) => {
+        let match = false;
+        if (_.isRegExp(listen) && listen.test(message.content)) {
+          match = true;
+        } else if (message.content.match(listen)) {
+          match = true;
         }
-        return false;
-      }
-      return true;
-    });
+        if (match) {
+          console.log('matched', listen);
+          let msg;
+          if (image) {
+            if (_.isArray(image)) {
+              msg = _.sample(image);
+            } else {
+              msg = image;
+            }
+            console.log('sending image embed');
+            const embed = makeEmbed(msg);
+            message.channel.send(embed);
+          } else if (message) {
+            let msg;
+            if (_.isString(message)) {
+              msg = message;
+            } else if (_.isArray(message)) {
+              msg = _.sample(message);
+            }
+            console.log('sending text');
+            await message.channel.send(msg);
+          }
+          return false;
+        }
+        return true;
+      });
+    } catch (error) {
+      console.error('Exception thrown:', error.message);
+      console.error(error);
+    }
   });
 };
