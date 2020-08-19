@@ -60,6 +60,9 @@ const triggers = [{
 }, {
   listen: /so say we all/i,
   image: 'https://media.giphy.com/media/NM4E1FcXQK6oE/giphy.gif',
+}, {
+  listen: /ding dong/i,
+  image: 'https://live.staticflickr.com/81/267944636_13df6e11c3_b.jpg',
 }];
 
 const makeEmbed = (imageUrl) => {
