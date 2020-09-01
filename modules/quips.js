@@ -36,7 +36,7 @@ const triggers = [{
   image: 'http://i.imgur.com/QlmfC.jpg',
 }, {
   listen: /wrong\./i,
-  image: 'https://giphy.com/gifs/ceeN6U57leAhi',
+  image: 'https://media2.giphy.com/media/ceeN6U57leAhi/giphy.gif',
 }, {
   listen: /what did you think/i,
   image: 'https://media.giphy.com/media/YP6GvHrK2bo1q/giphy.gif',
