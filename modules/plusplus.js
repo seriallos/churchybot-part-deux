@@ -96,10 +96,10 @@ export default async (client) => {
       let matches;
       if (matches = message.content.match(/^([^+-]+)(\+\+|--)( for (.*))?$/)) {
         const [, rawSubject, plusOrNeg, , rawReason] = matches;
-        const subject = _.toLower(rawSubject);
+        const subject = _.trim(_.toLower(rawSubject));
 
         const author = _.toLower(message.author.username);
-        const reason = _.toLower(rawReason);
+        const reason = _.trim(_.toLower(rawReason));
         const adjust = plusOrNeg === '++' ? 1 : -1;
 
         if (subject === author) {
