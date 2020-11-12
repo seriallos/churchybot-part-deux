@@ -30,7 +30,7 @@ const triggers = [{
   ],
 }, {
   listen: /(fillion|mal) (facepalm|confused|speechless)/i,
-  image: 'https://giphy.com/gifs/story-conversation-topic-vUEznRmVQfG2Q',
+  image: 'https://media.giphy.com/media/vUEznRmVQfG2Q/giphy.gif',
 }, {
   listen: /take my money/i,
   image: 'http://i.imgur.com/QlmfC.jpg',
