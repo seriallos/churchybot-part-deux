@@ -139,7 +139,6 @@ export default async (client) => {
       let matches;
       let what;
       let when;
-      console.log('remind trigger');
       if (matches = command.match(/^remind channel (.*)$/)) {
         const [, input] = matches;
 
@@ -228,8 +227,6 @@ export default async (client) => {
 
 
       if (what && when) {
-        console.log(message.author.username, what, when);
-
         const newReminder = {
           id: nextId,
           who: message.author.username,
@@ -241,14 +238,13 @@ export default async (client) => {
           whenHuman: when.toJSON(),
           reminder: what,
         };
-        console.log(newReminder);
 
         reminders.push(newReminder);
         nextId += 1;
         await save(reminders);
 
         message.channel.send('Reminder has been stored');
-        console.log(`ooc: Reminder stored.`);
+        console.log(`remind: Reminder stored: ${message.author.username}, ${what}, ${when.toJSON()}`);
       }
     }
   });
