@@ -10,8 +10,12 @@ const ROLE_CHANNEL = 'channel-setup';
 const DB_FILE = path.join(__dirname, '..', 'data', 'optchan.json');
 
 const load = async () => {
-  const contents = await fs.promises.readFile(DB_FILE);
-  return JSON.parse(contents);
+  try {
+    const contents = await fs.promises.readFile(DB_FILE);
+    return JSON.parse(contents);
+  } catch (error) {
+    console.error('Unable to load optchan DB:', error.message);
+  }
 };
 
 const save = async (db) => {
@@ -65,14 +69,18 @@ export default async client => {
         // ensure appropriate reaction exists in ROLE_CHANNEL
         log(`Create message and reaction for ${channel.name}`);
         const setupChannel = guild.channels.find(c => c.name === ROLE_CHANNEL);
-        const message = await setupChannel.send(`${channel.name}`);
-        const reaction = await message.react('✅');
-        dbData[channel.name] = {
-          message: message.id,
-          reaction: reaction.id,
-          key: channel.name,
-        };
-        await save(dbData);
+        if (setupChannel) {
+          const message = await setupChannel.send(`${channel.name}`);
+          const reaction = await message.react('✅');
+          dbData[channel.name] = {
+            message: message.id,
+            reaction: reaction.id,
+            key: channel.name,
+          };
+          await save(dbData);
+        } else {
+          log(`Cannot find ${ROLE_CHANNEL} channel, bailing`);
+        }
       }
     } else {
       log(`"${channel.name}" is not an optional channel, skipping ensure`);
@@ -91,12 +99,14 @@ export default async client => {
 
     // Disable most posting in the setup channel
     const setupChannel = guild.channels.find(c => c.name === ROLE_CHANNEL);
-    const everyone = guild.roles.find(r => r.name === '@everyone');
-    setupChannel.overwritePermissions(everyone, {
-      SEND_MESSAGES: false,
-    }, 'Ensure setup channel is not public writable');
+    if (setupChannel) {
+      const everyone = guild.roles.find(r => r.name === '@everyone');
+      setupChannel.overwritePermissions(everyone, {
+        SEND_MESSAGES: false,
+      }, 'Ensure setup channel is not public writable');
 
-    setupChannel.fetchMessages({ limit: 100 });
+      setupChannel.fetchMessages({ limit: 100 });
+    }
   };
 
   client.on('ready', () => {
@@ -127,17 +137,20 @@ export default async client => {
 
       const reactionInfo = _.find(dbData, { key: channel.name });
       const setupChannel = channel.guild.channels.find(c => c.name === ROLE_CHANNEL);
-      try {
-        const message = await setupChannel.fetchMessage(reactionInfo.message);
-        if (message) {
-          message.delete();
+      if (setupChannel) {
+        try {
+          const message = await setupChannel.fetchMessage(reactionInfo.message);
+          if (message) {
+            message.delete();
+          }
+        } catch (error) {
+          log(`Error! Unable to delete reaction message for ${channel.name}:`, error.message);
         }
-      } catch (error) {
-        log(`Error! Unable to delete reaction message for ${channel.name}:`, error.message);
+
+        delete dbData[channel.name];
+        await save(dbData);
       }
 
-      delete dbData[channel.name];
-      await save(dbData);
     }
   });
 
