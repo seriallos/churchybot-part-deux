@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.7.2",
+    "chrono-node": "^2.1.11",
+    "date-fns": "^2.16.1",
     "discord.js": "^11.5.1",
     "got": "^10.0.4",
     "lodash": "^4.17.15",
