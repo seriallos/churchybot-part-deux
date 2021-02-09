@@ -161,9 +161,10 @@ export default async client => {
       const channel = guild.channels.find(c => c.name === reactionChannel.key);
       const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
-      log(`Adding ${roleName} to ${user.username}`);
+      log(`Adding ${roleName} to ${user.username}...`);
       const member = await guild.fetchMember(user.id);
-      member.addRole(role);
+      await member.addRole(role);
+      log(`Added ${roleName} to ${user.username}`);
     }
   });
   client.on('messageReactionRemove', async (reaction, user) => {
@@ -173,9 +174,10 @@ export default async client => {
       const channel = guild.channels.find(c => c.name === reactionChannel.key);
       const roleName = getRoleName(channel);
       const role = guild.roles.find(r => r.name === roleName);
-      log(`Removing ${roleName} from ${user.username}`);
+      log(`Removing ${roleName} from ${user.username}...`);
       const member = await guild.fetchMember(user.id);
-      member.removeRole(role);
+      await member.removeRole(role);
+      log(`Removed ${roleName} from ${user.username}`);
     }
   });
 }
