@@ -5,7 +5,9 @@ Auto-purges messages from configured channels after a certain amount of time
 */
 import _ from 'lodash';
 
-const PURGE_INTERVAL = 5 * 60 * 1000;
+import { DEVMODE } from '../util';
+
+const PURGE_INTERVAL = DEVMODE ? 10 * 1000 : 5 * 60 * 1000;
 
 const niceTime = seconds => {
   const minutes = _.round(seconds / 60);
@@ -16,9 +18,9 @@ const niceTime = seconds => {
   } else if (hours > 0) {
     return `${hours} hour{hours !== 1 ? 's' : ''}`;
   } else if (minutes > 0) {
-    return `${minutes} minute{minutes !== 1 ? 's' : ''}`;
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
   }
-  return `${seconds} second{seconds !== 1 ? 's' : ''}`;
+  return `${seconds} second${seconds !== 1 ? 's' : ''}`;
 };
 
 const CHANNELS = [{
@@ -27,10 +29,13 @@ const CHANNELS = [{
 }, {
   name: 'image-me-roulette',
   ttl: 48 * 60 * 60,
+}, {
+  name: 'purger-test',
+  ttl: 60,
 }];
 
 const purge = async (client, channelName, ttl, topic) => {
-  const channel = client.guilds.first().channels.find(c => c.name === channelName);
+  const channel = client.guilds.cache.first().channels.cache.find(c => c.name === channelName);
 
   if (!channel) {
     console.log(`purger: ${channelName} not found`);
@@ -47,7 +52,7 @@ const purge = async (client, channelName, ttl, topic) => {
   let deletions = 0;
 
   do {
-    const messages = await channel.fetchMessages(options);
+    const messages = await channel.messages.fetch(options);
     if (messages.size === 0) {
       hasMore = false;
     } else {

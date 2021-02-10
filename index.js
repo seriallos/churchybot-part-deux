@@ -49,8 +49,8 @@ async function main() {
 
   client.on('ready', () => {
     console.log('Discord client ready');
-    const guild = client.guilds.first();
-    devChannel = guild.channels.find(c => c.name === LOG_CHANNEL);
+    const guild = client.guilds.cache.first();
+    devChannel = guild.channels.cache.find(c => c.name === LOG_CHANNEL);
     if (!started) {
       devLog('Bot started');
       started = true;

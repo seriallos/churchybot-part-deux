@@ -50,13 +50,20 @@ export default (client) => {
         console.log(`suckbot: talk to me requested, seedText: ${prefix}, temperature: ${temperature}`);
 
         message.channel.startTyping();
+        const start = Date.now();
 
         const text = await fetchText({ prefix, temperature });
+
+        const duration = Date.now() - start;
+
+        console.log(`suckbot: talk to me response ${duration}ms: "${text}"`);
 
         message.channel.stopTyping();
         message.channel.send(text);
       } catch (error) {
         // stop all typing, not just a single count
+        console.error(`suckbot: error! ${error.message}`);
+        console.error(error);
         message.channel.stopTyping(true);
         message.channel.send(`A SuckBot error has occurred: ${error.message}`);
       }

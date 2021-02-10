@@ -97,11 +97,11 @@ export default async (client) => {
 
     if (pastDue.length > 0) {
       console.log(`remind: ${pastDue.length} reminders are ready for reporting`);
-      const guild = client.guilds.first();
+      const guild = client.guilds.cache.first();
 
       await Promise.map(pastDue, async reminder => {
         // find channel
-        const channel = guild.channels.find(c => c.id === reminder.channelId);
+        const channel = guild.channels.cache.find(c => c.id === reminder.channelId);
         const relativeDate = timeDifference(new Date(), new Date(reminder.created));
 
         if (channel) {

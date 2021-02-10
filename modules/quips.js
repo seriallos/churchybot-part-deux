@@ -66,7 +66,7 @@ const triggers = [{
 }];
 
 const makeEmbed = (imageUrl) => {
-  return new Discord.RichEmbed()
+  return new Discord.MessageEmbed()
     .setURL(imageUrl)
     .setImage(imageUrl);
 };

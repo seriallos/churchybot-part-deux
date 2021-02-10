@@ -47,10 +47,10 @@ export default async (client) => {
         const topScores = _.take(_.reverse(_.sortBy(plusplus.scores, 'score')), 10);
         const bottomScores = _.take(_.sortBy(plusplus.scores, 'score'), 10);
 
-        const embed = new Discord.RichEmbed();
+        const embed = new Discord.MessageEmbed();
         embed.setTitle('Scores');
         embed.addField('Top Scores', _.map(topScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
-        embed.addBlankField(true);
+        embed.addField('\u200b', '\u200b');
         embed.addField('Bottom Scores', _.map(bottomScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
         message.channel.send(embed);
         console.log('plusplus: scores requested');
@@ -79,11 +79,11 @@ export default async (client) => {
             reason => `${reason.reason}: ${reason.score}`,
           );
 
-          const embed = new Discord.RichEmbed();
+          const embed = new Discord.MessageEmbed();
           embed.setTitle(`${subject}`);
           embed.setDescription(`**${result.score}** points`);
           embed.addField('Positive Raisins', plusReasons.join('\n') || 'None', true);
-          embed.addBlankField(true);
+          embed.addField('\u200b', '\u200b');
           embed.addField('Negative Raisins', negReasons.join('\n') || 'None', true);
           message.channel.send(embed);
           console.log(`plusplus: score for ${subject} sent`);
