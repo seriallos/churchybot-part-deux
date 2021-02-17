@@ -58,15 +58,16 @@ const purge = async (client, channelName, ttl, topic) => {
       if (messages.size === 0) {
         hasMore = false;
       } else {
-        await Promise.map(messages, async message => {
+        await Promise.mapSeries(messages.array(), async (message) => {
           options.before = message.id;
           const age = (new Date().getTime() - message.createdAt.getTime()) / 1000;
           if (age > ttl) {
+            console.log('Deleting message', message.id);
             await message.delete();
             await Promise.delay(1000);
             deletions += 1;
           }
-        }, { concurrency: 1 });
+        });
       }
     } while (hasMore);
 
