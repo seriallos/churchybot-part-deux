@@ -62,7 +62,6 @@ const purge = async (client, channelName, ttl, topic) => {
           options.before = message.id;
           const age = (new Date().getTime() - message.createdAt.getTime()) / 1000;
           if (age > ttl) {
-            console.log('Deleting message', message.id);
             await message.delete();
             await Promise.delay(1000);
             deletions += 1;
