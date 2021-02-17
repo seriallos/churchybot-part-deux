@@ -4,6 +4,7 @@ Auto-purges messages from configured channels after a certain amount of time
 
 */
 import _ from 'lodash';
+import Promise from 'bluebird';
 
 import { DEVMODE } from '../util';
 
@@ -35,40 +36,46 @@ const CHANNELS = [{
 }];
 
 const purge = async (client, channelName, ttl, topic) => {
-  const channel = client.guilds.cache.first().channels.cache.find(c => c.name === channelName);
+  try {
+    const channel = client.guilds.cache.first().channels.cache.find(c => c.name === channelName);
 
-  if (!channel) {
-    console.log(`purger: ${channelName} not found`);
-    return;
-  }
-
-  channel.setTopic(topic || `This channel automatically deletes messages after ${niceTime(ttl)}`);
-
-  const options = {
-    limit: 50,
-  };
-
-  let hasMore = true;
-  let deletions = 0;
-
-  do {
-    const messages = await channel.messages.fetch(options);
-    if (messages.size === 0) {
-      hasMore = false;
-    } else {
-      messages.forEach(message => {
-        options.before = message.id;
-        const age = (new Date().getTime() - message.createdAt.getTime()) / 1000;
-        if (age > ttl) {
-          message.delete();
-          deletions += 1;
-        }
-      });
+    if (!channel) {
+      console.log(`purger: ${channelName} not found`);
+      return;
     }
-  } while (hasMore);
 
-  if (deletions > 0) {
-    console.log(`purger: Deleted ${deletions} messages from ${channelName}`);
+    channel.setTopic(topic || `This channel automatically deletes messages after ${niceTime(ttl)}`);
+
+    const options = {
+      limit: 50,
+    };
+
+    let hasMore = true;
+    let deletions = 0;
+
+    do {
+      const messages = await channel.messages.fetch(options);
+      if (messages.size === 0) {
+        hasMore = false;
+      } else {
+        messages.forEach(message => {
+          options.before = message.id;
+          const age = (new Date().getTime() - message.createdAt.getTime()) / 1000;
+          if (age > ttl) {
+            await message.delete();
+            await Promise.delay(1000);
+            deletions += 1;
+          }
+        });
+      }
+    } while (hasMore);
+
+    if (deletions > 0) {
+      console.log(`purger: Deleted ${deletions} messages from ${channelName}`);
+    }
+  } catch (error) {
+    console.error('Error encountered during purging:', error.message);
+    console.error(error);
   }
 
   setTimeout(() => purge(client, channelName, ttl, topic), PURGE_INTERVAL);
