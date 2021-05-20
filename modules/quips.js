@@ -63,6 +63,9 @@ const triggers = [{
 }, {
   listen: /ding dong/i,
   image: 'https://live.staticflickr.com/81/267944636_13df6e11c3_b.jpg',
+}, {
+  listen: /to be fair/i,
+  image: 'https://media4.giphy.com/media/cYeNgi1c2MGnI4L4yS/giphy.gif',
 }];
 
 const makeEmbed = (imageUrl) => {
