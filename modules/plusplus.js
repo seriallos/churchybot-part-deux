@@ -40,7 +40,9 @@ export default async (client) => {
       return;
     }
 
+    console.log('plusplus message.content', message.content);
     const command = getChurchybotCommand(message);
+    console.log('plusplus command', command);
     if (command) {
       let matches;
       if (command === 'scores') {
