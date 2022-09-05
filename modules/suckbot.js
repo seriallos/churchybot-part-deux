@@ -29,7 +29,7 @@ export default (client) => {
     return text;
   };
 
-  client.on('message', async message => {
+  client.on('messageCreate', async message => {
     // ignore bot messages
     if (message.author.bot) {
       return;
@@ -49,7 +49,7 @@ export default (client) => {
 
         console.log(`suckbot: talk to me requested, seedText: ${prefix}, temperature: ${temperature}`);
 
-        message.channel.startTyping();
+        message.channel.sendTyping();
         const start = Date.now();
 
         const text = await fetchText({ prefix, temperature });
@@ -58,13 +58,10 @@ export default (client) => {
 
         console.log(`suckbot: talk to me response ${duration}ms: "${text}"`);
 
-        message.channel.stopTyping();
         message.channel.send(text);
       } catch (error) {
-        // stop all typing, not just a single count
         console.error(`suckbot: error! ${error.message}`);
         console.error(error);
-        message.channel.stopTyping(true);
         message.channel.send(`A SuckBot error has occurred: ${error.message}`);
       }
     } else {
@@ -76,16 +73,13 @@ export default (client) => {
         // Use the last couple of words of the message as the text generation seed
         const prefix = message.content.split(" ").splice(-2).join(" ")
 
-        message.channel.startTyping();
+        message.channel.sendTyping();
 
         const text = await fetchText({ prefix });
 
-        message.channel.stopTyping();
         message.channel.send(text);
       }
       } catch (error) {
-        // stop all typing, not just a single count
-        message.channel.stopTyping(true);
         message.channel.send(`A chatty SuckBot error has occurred: ${error.message}`);
       }
     }

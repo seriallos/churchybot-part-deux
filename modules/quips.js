@@ -75,7 +75,7 @@ const makeEmbed = (imageUrl) => {
 };
 
 export default (client) => {
-  client.on('message', async message => {
+  client.on('messageCreate', async message => {
     // ignore bot messages
     if (message.author.bot) {
       return;
@@ -99,7 +99,7 @@ export default (client) => {
             }
             console.log('quips: sending image embed');
             const embed = makeEmbed(msg);
-            await message.channel.send(embed);
+            await message.channel.send({ embeds: [embed] });
             console.log('quips: sent image embed');
           } else if (text) {
             let msg;

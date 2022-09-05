@@ -59,9 +59,7 @@ export default async client => {
       if (!role) {
         log(`Creating role "${roleName}"`);
         role = await channel.guild.roles.create({
-          data: {
-            name: roleName,
-          },
+          name: roleName,
           reason: 'Optional channel role creation',
         });
       } else {
@@ -70,14 +68,12 @@ export default async client => {
 
       // ensure channel is private
       const everyone = guild.roles.cache.find(r => r.name === '@everyone');
-      channel.createOverwrite(everyone, {
-        READ_MESSAGES: false,
+      channel.permissionOverwrites.create(everyone, {
         VIEW_CHANNEL: false,
       }, 'Ensure optional channel is private');
 
       // ensure channel can be seen by the role
-      channel.createOverwrite(role, {
-        READ_MESSAGES: true,
+      channel.permissionOverwrites.create(role, {
         VIEW_CHANNEL: true,
       }, 'Ensure optional channel role can view');
 
@@ -116,7 +112,7 @@ export default async client => {
     const setupChannel = guild.channels.cache.find(c => c.name === ROLE_CHANNEL);
     if (setupChannel) {
       const everyone = guild.roles.cache.find(r => r.name === '@everyone');
-      setupChannel.createOverwrite(everyone, {
+      setupChannel.permissionOverwrites.create(everyone, {
         SEND_MESSAGES: false,
       }, 'Ensure setup channel is not public writable');
 

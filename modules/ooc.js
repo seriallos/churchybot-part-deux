@@ -31,7 +31,7 @@ export default async (client) => {
 
   console.log(`Loaded ${quotes.length} quotes`);
 
-  client.on('message', async (message) => {
+  client.on('messageCreate', async (message) => {
     // ignore bot messages
     if (message.author.bot) {
       return;

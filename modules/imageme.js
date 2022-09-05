@@ -61,7 +61,7 @@ export default (client) => {
     console.warn('Missing env vars for image me: CHURCHYBOT_GOOGLE_CSE_ID or CHURCHYBOT_GOOGLE_CSE_KEY');
     console.warn('"image me" and "animate me" are disabled!');
   } else {
-    client.on('message', async message => {
+    client.on('messageCreate', async message => {
       if (message.author.bot) {
         return;
       }
@@ -107,7 +107,7 @@ export default (client) => {
             } else if (lastMessage.embeds.length > 0) {
               const prevEmbed = lastMessage.embeds[0];
               const embed = new Discord.MessageEmbed(lastMessage.embeds[0]);
-              await collapseChannel.send(embed);
+              await collapseChannel.send({ embeds: [embed] });
               const collapsedEmbed = new Discord.MessageEmbed().setTitle(collapseText);
               lastMessage.edit(collapsedEmbed);
             }
@@ -121,7 +121,7 @@ export default (client) => {
           console.log(
             `imageme: ${channelName}: Searching for "${searchText}", animated: ${animated}, numImages: ${numImages}`,
           );
-          message.channel.startTyping();
+          message.channel.sendTyping();
           const results = await search(searchText, animated);
           _.each(_.sampleSize(results, numImages), async imageUrl => {
             let sentMessage;
@@ -129,7 +129,7 @@ export default (client) => {
               sentMessage = await message.channel.send(`|| ${imageUrl} ||`);
             } else {
               const embed = makeEmbed(searchText, imageUrl);
-              sentMessage = await message.channel.send(embed);
+              sentMessage = await message.channel.send({ embeds: [ embed ] });
             }
 
             if (canCollapse) {
@@ -140,8 +140,6 @@ export default (client) => {
       } catch (err) {
         console.error('imageme: Error!', err.message);
         console.error(err);
-      } finally {
-        message.channel.stopTyping();
       }
     });
   }

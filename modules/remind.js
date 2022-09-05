@@ -124,7 +124,7 @@ export default async (client) => {
     checkReminders();
   });
 
-  client.on('message', async (message) => {
+  client.on('messageCreate', async (message) => {
     // ignore bot messages
     if (message.author.bot) {
       return;

@@ -6,7 +6,7 @@ export default (client) => {
 
   const url = 'https://icanhazdadjoke.com/';
 
-  client.on('message', async message => {
+  client.on('messageCreate', async message => {
     // ignore bot messages
     if (message.author.bot) {
       return;

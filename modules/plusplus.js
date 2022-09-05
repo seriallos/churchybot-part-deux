@@ -37,7 +37,7 @@ export default async (client) => {
 
   console.log(`Loaded ${plusplus.scores.length} subjects`);
 
-  client.on('message', async (message) => {
+  client.on('messageCreate', async (message) => {
     // ignore bot messages
     if (message.author.bot) {
       return;
@@ -55,7 +55,7 @@ export default async (client) => {
         embed.addField('Top Scores', _.map(topScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
         embed.addField('\u200b', '\u200b');
         embed.addField('Bottom Scores', _.map(bottomScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
-        message.channel.send(embed);
+        message.channel.send({ embeds: [ embed ]});
         console.log('plusplus: scores requested');
       } else if (command === 'top 10') {
         const topScores = _.take(_.reverse(_.sortBy(plusplus.scores, 'score')), 10);
@@ -88,7 +88,7 @@ export default async (client) => {
           embed.addField('Positive Raisins', plusReasons.join('\n') || 'None', true);
           embed.addField('\u200b', '\u200b');
           embed.addField('Negative Raisins', negReasons.join('\n') || 'None', true);
-          message.channel.send(embed);
+          message.channel.send({ embeds: [ embed ]});
           console.log(`plusplus: score for ${subject} sent`);
         } else {
           message.channel.send(`"${subject}" is not in the database`);
