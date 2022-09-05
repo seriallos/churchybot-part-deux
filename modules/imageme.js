@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 import _ from 'lodash';
 import got from 'got';
 
-import { getChurchybotCommand } from '../util';
+import { getChurchybotCommand } from '../util.js';
 
 const SPOILER_CHANNELS = [
 ];

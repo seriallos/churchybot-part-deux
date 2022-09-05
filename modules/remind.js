@@ -1,14 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import {fileURLToPath} from 'node:url';
 
 import Promise from 'bluebird';
 
 import _ from 'lodash';
-import add from 'date-fns/add';
-import formatRelative from 'date-fns/formatRelative';
+import { add, formatRelative } from 'date-fns';
 import * as chrono from 'chrono-node';
 
-import { getChurchybotCommand } from '../util';
+import { getChurchybotCommand } from '../util.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // how often to check to see if a reminder should be announced
 const CHECK_INTERVAL = 5 * 1000;

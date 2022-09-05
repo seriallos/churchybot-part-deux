@@ -1,10 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import {fileURLToPath} from 'node:url';
 
 import _ from 'lodash';
 import Discord from 'discord.js';
 
-import { getChurchybotCommand } from '../util';
+import { getChurchybotCommand } from '../util.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const REPEAT_THRESHOLD = 60 * 1000;
 

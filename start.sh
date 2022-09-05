@@ -1,3 +1,4 @@
+#!/bin/bash
 git pull
 npm install
-npx babel-node index.js
+node index.js

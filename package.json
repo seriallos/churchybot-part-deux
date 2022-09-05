@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.mjs",
+  "type": "module",
   "scripts": {
-    "dev": "npx nodemon --exec babel-node -i data/ index.js",
+    "dev": "npx nodemon -i data/ index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,14 +15,9 @@
     "chrono-node": "^2.2.0",
     "date-fns": "^2.17.0",
     "discord.js": "^12.5.1",
-    "got": "^10.7.0",
+    "got": "^11.0.0",
     "lodash": "^4.17.20",
     "nodemon": "^2.0.7",
     "printf": "^0.5.3"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.13",
-    "@babel/node": "^7.12.13",
-    "@babel/preset-env": "^7.12.13"
   }
 }

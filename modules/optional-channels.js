@@ -3,6 +3,10 @@ import path from 'path';
 
 import _ from 'lodash';
 
+import {fileURLToPath} from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const OPTIONAL_CATEGORY = 'Optional Channels';
 
 const ROLE_CHANNEL = 'channel-setup';

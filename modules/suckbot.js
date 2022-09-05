@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 import got from 'got';
 import _ from 'lodash';
 
-import { getChurchybotCommand } from '../util';
+import { getChurchybotCommand } from '../util.js';
 
 // Control how often the bot spouts off at random
 const CHATTINESS = 0.1;

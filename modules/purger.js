@@ -6,7 +6,7 @@ Auto-purges messages from configured channels after a certain amount of time
 import _ from 'lodash';
 import Promise from 'bluebird';
 
-import { DEVMODE } from '../util';
+import { DEVMODE } from '../util.js';
 
 const PURGE_INTERVAL = DEVMODE ? 10 * 1000 : 5 * 60 * 1000;
 

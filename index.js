@@ -5,6 +5,10 @@ import _ from 'lodash';
 
 import Discord from 'discord.js';
 
+import {fileURLToPath} from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 console.log('ChurchyBot starting');
 
 const MODULES_DIR = path.join(__dirname, 'modules');

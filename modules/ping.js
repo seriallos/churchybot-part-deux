@@ -1,4 +1,4 @@
-import { getChurchybotCommand } from '../util';
+import { getChurchybotCommand } from '../util.js';
 
 export default (client) => {
   client.on('message', message => {
