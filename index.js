@@ -4,6 +4,7 @@ import path from 'path';
 import _ from 'lodash';
 
 import Discord, { GatewayIntentBits } from 'discord.js';
+import { ChannelType } from 'discord-api-types/v10';
 
 import {fileURLToPath} from 'node:url';
 
@@ -65,15 +66,33 @@ async function main() {
 
   // set up discord events
 
-  client.on('ready', () => {
+  client.on('ready', async () => {
     console.log('Discord client ready');
     const guild = client.guilds.cache.first();
     devChannel = guild.channels.cache.find(c => c.name === LOG_CHANNEL);
+    // join all threads
+    const response = await guild.channels.fetchActiveThreads();
+    guild.channels.cache.each(channel => {
+      if (channel.type === ChannelType.PublicThread) {
+        if (channel.joinable) {
+          console.log('Joining thread', channel.name);
+          channel.join();
+        }
+      }
+    });
     if (!started) {
       devLog('Bot started');
       started = true;
     }
   });
+
+  client.on('threadCreate', thread => {
+    if (thread.joinable) {
+      console.log('Joining thread', thread.name);
+      thread.join();
+    }
+  });
+
   client.on('error', error => {
     console.error('Discord client error', error);
     devLog(`Client error: ${error.message}`);
