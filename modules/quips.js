@@ -69,7 +69,7 @@ const triggers = [{
 }];
 
 const makeEmbed = (imageUrl) => {
-  return new Discord.MessageEmbed()
+  return new Discord.EmbedBuilder()
     .setURL(imageUrl)
     .setImage(imageUrl);
 };

@@ -32,7 +32,7 @@ const CHANNELS = [{
   ttl: 48 * 60 * 60,
 }, {
   name: 'purger-test',
-  ttl: 60,
+  ttl: 10,
 }];
 
 const purge = async (client, channelName, ttl, topic) => {

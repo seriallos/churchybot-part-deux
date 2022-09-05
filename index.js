@@ -3,7 +3,7 @@ import path from 'path';
 
 import _ from 'lodash';
 
-import Discord, { Intents } from 'discord.js';
+import Discord, { GatewayIntentBits } from 'discord.js';
 
 import {fileURLToPath} from 'node:url';
 
@@ -31,18 +31,19 @@ async function main() {
       devChannel.send({ content: msg });
     }
   };
+
   const client = new Discord.Client({
     intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MEMBERS,
-      Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-      Intents.FLAGS.GUILD_INTEGRATIONS,
-      Intents.FLAGS.GUILD_WEBHOOKS,
-      Intents.FLAGS.GUILD_INVITES,
-      Intents.FLAGS.GUILD_PRESENCES,
-      Intents.FLAGS.GUILD_MESSAGES,
-      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-      1 << 15,
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildEmojisAndStickers,
+      GatewayIntentBits.GuildIntegrations,
+      GatewayIntentBits.GuildWebhooks,
+      GatewayIntentBits.GuildInvites,
+      GatewayIntentBits.GuildPresences,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.MessageContent,
     ],
   });
 

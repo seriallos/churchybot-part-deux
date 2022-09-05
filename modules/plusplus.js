@@ -50,11 +50,13 @@ export default async (client) => {
         const topScores = _.take(_.reverse(_.sortBy(plusplus.scores, 'score')), 10);
         const bottomScores = _.take(_.sortBy(plusplus.scores, 'score'), 10);
 
-        const embed = new Discord.MessageEmbed();
+        const embed = new Discord.EmbedBuilder();
         embed.setTitle('Scores');
-        embed.addField('Top Scores', _.map(topScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
-        embed.addField('\u200b', '\u200b');
-        embed.addField('Bottom Scores', _.map(bottomScores, s => `${s.subject}: ${s.score}`).join('\n'), true);
+        embed.addFields([
+          { name: 'Top Scores', value: _.map(topScores, s => `${s.subject}: ${s.score}`).join('\n'), inline: true },
+          { name: '\u200b', value: '\u200b', inline: true },
+          { name: 'Bottom Scores', value: _.map(bottomScores, s => `${s.subject}: ${s.score}`).join('\n'), inline: true },
+        ]);
         message.channel.send({ embeds: [ embed ]});
         console.log('plusplus: scores requested');
       } else if (command === 'top 10') {
@@ -82,12 +84,14 @@ export default async (client) => {
             reason => `${reason.reason}: ${reason.score}`,
           );
 
-          const embed = new Discord.MessageEmbed();
+          const embed = new Discord.EmbedBuilder();
           embed.setTitle(`${subject}`);
           embed.setDescription(`**${result.score}** points`);
-          embed.addField('Positive Raisins', plusReasons.join('\n') || 'None', true);
-          embed.addField('\u200b', '\u200b');
-          embed.addField('Negative Raisins', negReasons.join('\n') || 'None', true);
+          embed.addFields([
+            { name: 'Positive Raisins', value: plusReasons.join('\n') || 'None', inline: true },
+            { name: '\u200b', value: '\u200b', inline: true },
+            { name: 'Negative Raisins', value: negReasons.join('\n') || 'None', inline: true },
+          ]);
           message.channel.send({ embeds: [ embed ]});
           console.log(`plusplus: score for ${subject} sent`);
         } else {

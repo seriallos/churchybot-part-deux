@@ -23,7 +23,7 @@ export default (client) => {
   });
 
   const makeEmbed = (searchText, imageUrl) => {
-    return new Discord.MessageEmbed()
+    return new Discord.EmbedBuilder()
       .setTitle(searchText)
       .setURL(imageUrl)
       .setImage(imageUrl);
@@ -106,9 +106,9 @@ export default (client) => {
               lastMessage.edit(collapseText);
             } else if (lastMessage.embeds.length > 0) {
               const prevEmbed = lastMessage.embeds[0];
-              const embed = new Discord.MessageEmbed(lastMessage.embeds[0]);
+              const embed = new Discord.EmbedBuilder(lastMessage.embeds[0]);
               await collapseChannel.send({ embeds: [embed] });
-              const collapsedEmbed = new Discord.MessageEmbed().setTitle(collapseText);
+              const collapsedEmbed = new Discord.EmbedBuilder().setTitle(collapseText);
               lastMessage.edit(collapsedEmbed);
             }
           } else {

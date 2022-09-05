@@ -69,12 +69,12 @@ export default async client => {
       // ensure channel is private
       const everyone = guild.roles.cache.find(r => r.name === '@everyone');
       channel.permissionOverwrites.create(everyone, {
-        VIEW_CHANNEL: false,
+        ViewChannel: false,
       }, 'Ensure optional channel is private');
 
       // ensure channel can be seen by the role
       channel.permissionOverwrites.create(role, {
-        VIEW_CHANNEL: true,
+        ViewChannel: true,
       }, 'Ensure optional channel role can view');
 
       if (!dbData[channel.name]) {
@@ -113,7 +113,7 @@ export default async client => {
     if (setupChannel) {
       const everyone = guild.roles.cache.find(r => r.name === '@everyone');
       setupChannel.permissionOverwrites.create(everyone, {
-        SEND_MESSAGES: false,
+        SendMessages: false,
       }, 'Ensure setup channel is not public writable');
 
       setupChannel.messages.fetch({ limit: 100 });
