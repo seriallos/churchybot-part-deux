@@ -52,6 +52,12 @@ export default async (client) => {
         message.channel.send('Invalid OOC format. Must be "ooc NAME: QUOTE"');
         console.log(`ooc: invalid ooc request`);
       }
+    } else if (message.content.match(/^random-ooc/)) {
+      const quote = _.sample(quotes);
+      if (quote) {
+        message.channel.send(`"${_.trim(quote.quote, '"')}" - ${quote.speaker}`);
+        console.log(`ooc: random-ooc called`);
+      }
     } else {
       const roll = 100 * _.random(0, 1, true);
       if (roll < OOC_CHANCE_PCT) {
