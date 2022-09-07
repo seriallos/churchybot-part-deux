@@ -91,8 +91,10 @@ async function main() {
 
   // register commands with REST API
 
+  // Dave's test server and test bot
   const testGuildId = '398645287926628362';
   const testClientId = '805262898943229963';
+  const realClientId = '655917018339475485';
 
   const rest = new REST({ version: '10' }).setToken(TOKEN);
 
@@ -103,10 +105,33 @@ async function main() {
         body: _.map(commands, command => command.toJSON()),
       },
     );
+    console.log('Test commands updated');
   } catch (error) {
-    console.error('Unable to PUT test commands');
-    console.error(error);
-    process.exit(4);
+    if (error.code === 20012) {
+      console.log('Not authorized to update test commands');
+    } else {
+      console.error('Unable to PUT test commands');
+      console.error(error);
+      process.exit(4);
+    }
+  }
+
+  try {
+    await rest.put(
+      Routes.applicationCommands(realClientId),
+      {
+        body: _.map(commands, command => command.toJSON()),
+      },
+    );
+    console.log('Prod commands updated');
+  } catch (error) {
+    if (error.code === 20012) {
+      console.log('Not authorized to update prod commands');
+    } else {
+      console.error('Unable to PUT prod commands');
+      console.error(error);
+      process.exit(5);
+    }
   }
 
   // set up interaction handler
