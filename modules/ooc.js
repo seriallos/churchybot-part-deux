@@ -2,8 +2,11 @@ import fs from 'fs';
 import path from 'path';
 
 import _ from 'lodash';
+import { SlashCommandBuilder } from 'discord.js';
 
 import {fileURLToPath} from 'node:url';
+
+let quotes = [];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -21,8 +24,38 @@ const save = async (quotes) => {
 
 const OOC_CHANCE_PCT = 1;
 
+const saveOoc = async (speaker, quote) => {
+  quotes.push({
+    speaker,
+    quote: _.trim(quote, '"'),
+  });
+  await save(quotes);
+};
+
+export const commands = [{
+  command: new SlashCommandBuilder()
+    .setName('ooc')
+    .setDescription('Save an out-of-context quote')
+    .addStringOption(option =>
+      option.setName('who')
+        .setDescription('Who said it')
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName('what')
+        .setDescription('What they said')
+        .setRequired(true)
+    ),
+  execute: async (interaction) => {
+    console.log('Received ooc interaction');
+    const speaker = interaction.options.getString('who');
+    const quote = interaction.options.getString('what');
+    await saveOoc(speaker, quote);
+    await interaction.reply(`Quote saved! ${speaker} said "${quote}"`);
+  },
+}];
+
 export default async (client) => {
-  let quotes = [];
   try {
     quotes = await load();
   } catch (error) {
@@ -41,11 +74,7 @@ export default async (client) => {
       let matches;
       if (matches = message.content.match(/^ooc ([a-zA-Z0-9_]+): (.*)$/)) {
         const [, speaker, quote] = matches;
-        quotes.push({
-          speaker,
-          quote: _.trim(quote, '"'),
-        });
-        await save(quotes);
+        await saveOoc(speaker, quote);
         message.channel.send('Quote has been stored for future prosperity');
         console.log(`ooc: Quote stored. speaker: "${speaker}", quote: "${quote}"`);
       } else {

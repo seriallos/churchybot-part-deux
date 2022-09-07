@@ -3,7 +3,9 @@ import path from 'path';
 
 import _ from 'lodash';
 
-import Discord, { GatewayIntentBits } from 'discord.js';
+import Discord, { GatewayIntentBits, Routes } from 'discord.js';
+import { REST } from '@discordjs/rest';
+
 import { ChannelType } from 'discord-api-types/v10';
 
 import {fileURLToPath} from 'node:url';
@@ -52,8 +54,10 @@ async function main() {
 
   const dir = await fs.promises.opendir(MODULES_DIR);
   const modules = [];
+  const commands = [];
+  const interactions = {};
   for await (const entry of dir) {
-    console.log('Loading module:', entry.name);
+    console.log('>> Loading module:', entry.name);
     const module = await import(path.join(__dirname, 'modules', entry.name));
     if (!_.isFunction(module.default)) {
       console.error('Invalid module!', entry.name, 'does not have a function as the default export');
@@ -61,8 +65,67 @@ async function main() {
       console.error('  export default (client) => { /* do stuff */ }');
       process.exit(2);
     }
+
     await module.default(client);
+
+    // single command export mode
+    if (module.command) {
+      if (module.execute) {
+        interactions[module.command.name] = module.execute;
+      } else {
+        console.error(`Module ${entry.name} has a slash command but no execute() handler!`);
+        process.exit(3);
+      }
+
+      commands.push(module.command);
+    }
+
+    // multiple command export mode
+    if (module.commands) {
+      _.each(module.commands, ({ command, execute }) => {
+        interactions[command.name] = execute;
+        commands.push(command);
+      });
+    }
   }
+
+  // register commands with REST API
+
+  const testGuildId = '398645287926628362';
+  const testClientId = '805262898943229963';
+
+  const rest = new REST({ version: '10' }).setToken(TOKEN);
+
+  try {
+    await rest.put(
+      Routes.applicationGuildCommands(testClientId, testGuildId),
+      {
+        body: _.map(commands, command => command.toJSON()),
+      },
+    );
+  } catch (error) {
+    console.error('Unable to PUT test commands');
+    console.error(error);
+    process.exit(4);
+  }
+
+  // set up interaction handler
+
+  client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) {
+      return;
+    }
+
+    console.log(`Received interaction ${interaction.commandName}`);
+
+    const execute = interactions[interaction.commandName];
+
+    if (execute) {
+      await execute(interaction);
+    } else {
+      await interaction.reply('Unknown interaction received. Might be a slash command in testing, might be a crazy error');
+    }
+  });
 
   // set up discord events
 

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'node:url';
 
+import { SlashCommandBuilder } from 'discord.js';
 import Promise from 'bluebird';
 
 import _ from 'lodash';
@@ -16,6 +17,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CHECK_INTERVAL = 5 * 1000;
 
 const REMINDER_DB = path.join(__dirname, '..', 'data', 'remind.json');
+
+let nextId = 1;
+let reminders = [];
 
 const load = async () => {
   const contents = await fs.promises.readFile(REMINDER_DB);
@@ -79,9 +83,100 @@ function timeDifference(current, previous) {
   }
 }
 
+const saveReminder = async (responder, what, when) => {
+  // remove some filler words from the start/end of the text
+  const trimStartWords = [
+    'me',
+    'us',
+    'to',
+    'that',
+    'about',
+  ];
+  const trimEndWords = [
+    'on',
+    'at',
+    'in',
+  ];
+
+  const words = _.dropRightWhile(
+    _.dropWhile(
+      _.split(what, ' '),
+      word => _.includes(trimStartWords, word),
+    ),
+    word => _.includes(trimEndWords, word),
+  );
+
+  const reminder = _.trim(_.join(words, ' '));
+
+  if (!reminder) {
+    responder.reply(`Unable to parse reminder, make sure date is at the end`);
+    console.error('Unable to determine reminder text!');
+    console.error('input: ', input);
+    console.error('when: ', when);
+    console.error('trimmed text: ', text);
+    return;
+  }
+
+  what = reminder;
+
+  const user = responder.author || responder.user;
+  let channel = responder.channel;
+  if (!channel) {
+    const guild = client.guilds.cache.first();
+    channel = guild.channels.cache.find(c => c.id === responder.channelId);
+  }
+
+  const newReminder = {
+    id: nextId,
+    who: user.username,
+    whoId: user.id,
+    created: new Date().getTime(),
+    channel: channel.name,
+    channelId: channel.id,
+    when: when.getTime(),
+    whenHuman: when.toJSON(),
+    reminder: what,
+  };
+
+  reminders.push(newReminder);
+  nextId += 1;
+  await save(reminders);
+
+  responder.reply('Reminder has been stored');
+  console.log(`remind: Reminder stored: ${user.username}, ${what}, ${when.toJSON()}`);
+};
+
+export const commands = [{
+  command: new SlashCommandBuilder()
+    .setName('remind')
+    .setDescription('Show the top and bottom 10 scores')
+    .addStringOption(option =>
+      option.setName('what')
+        .setDescription('Text of the reminder')
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName('when')
+        .setDescription('When it should remind, e.g. "6 months", "march 1st", "2 weeks from now"')
+        .setRequired(true)
+    ),
+  execute: async (interaction) => {
+    console.log('Received remind interaction');
+    const what = interaction.options.getString('what');
+    const when = interaction.options.getString('when');
+
+    const now = new Date();
+    const chronoOptions = {
+      forwardDate: true,
+    };
+
+    const parsedWhen = chrono.parseDate(when, now, chronoOptions);
+
+    await saveReminder(interaction, what, parsedWhen);
+  },
+}];
+
 export default async (client) => {
-  let nextId = 1;
-  let reminders = [];
   try {
     reminders = await load();
     nextId = _.get(_.maxBy(reminders, 'id'), 'id', 0) + 1;
@@ -113,6 +208,8 @@ export default async (client) => {
           );
           reminders = _.reject(reminders, { id: reminder.id });
           await save(reminders);
+        } else {
+          console.error(`Unable to find channel ${reminder.channelId}`);
         }
       });
     }
@@ -161,92 +258,7 @@ export default async (client) => {
 
         const text = _.trim(input.substr(0, _.last(parsedDate).index), ' "\'');
 
-        // remove some filler words from the start/end of the text
-        const trimStartWords = [
-          'me',
-          'us',
-          'to',
-          'that',
-          'about',
-        ];
-        const trimEndWords = [
-          'on',
-          'at',
-          'in',
-        ];
-
-        const words = _.dropRightWhile(
-          _.dropWhile(
-            _.split(text, ' '),
-            word => _.includes(trimStartWords, word),
-          ),
-          word => _.includes(trimEndWords, word),
-        );
-
-        const reminder = _.trim(_.join(words, ' '));
-
-        if (!reminder) {
-          message.channel.send(`Unable to parse reminder, make sure date is at the end`);
-          console.error('Unable to determine reminder text!');
-          console.error('input: ', input);
-          console.error('when: ', when);
-          console.error('trimmed text: ', text);
-          return;
-        }
-
-        what = reminder;
-      /*
-      } else if (matches = command.match(/^remind (.*?) (in )?(\d+) (\w+)$/)) {
-        const [, reminder, , periodNum, periodTimeframe] = matches;
-
-        if (!timeframeToDuration[periodTimeframe]) {
-          message.channel.send(`"${periodTimeframe}" is not a valid time frame`);
-          return;
-        }
-
-        const num = parseInt(periodNum, 10);
-        if (_.isNaN(num) || num <= 0) {
-          message.channel.send(`"${periodNum}" is not a valid number for the time frame`);
-          return;
-        }
-
-        const duration = {};
-        duration[timeframeToDuration[periodTimeframe]] = periodNum;
-
-        when = add(new Date(), duration);
-        what = reminder;
-      } else if (matches = command.match(/^remind (.*?) (on )?(\w+) (\d+)$/)) {
-        const [, reminder, , month, day] = matches;
-
-        console.log(month, day);
-
-        what = reminder;
-      } else {
-        message.channel.send('Invalid remind format. General format is "remind channel [what] [when]"');
-        console.log(`ooc: invalid reminder request`);
-        */
-      }
-
-
-      if (what && when) {
-        const newReminder = {
-          id: nextId,
-          who: message.author.username,
-          whoId: message.author.id,
-          created: new Date().getTime(),
-          channel: message.channel.name,
-          channelId: message.channel.id,
-          when: when.getTime(),
-          whenHuman: when.toJSON(),
-          reminder: what,
-        };
-
-        reminders.push(newReminder);
-        nextId += 1;
-        await save(reminders);
-
-        message.channel.send('Reminder has been stored');
-        console.log(`remind: Reminder stored: ${message.author.username}, ${what}, ${when.toJSON()}`);
+        await saveReminder(message, text, when);
       }
     }
   });
