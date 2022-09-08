@@ -53,10 +53,14 @@ const search = async (text, animated) => {
 };
 
 const replyWithImage = async (responder, { text, num = 1, animate = false, spoiler = false }) => {
-  if (responder.sendTyping) {
+  let deferred = false;
+  if (responder.deferReply) {
+    // if called from a slash command since it might take longer than 3 seconds
+    await responder.deferReply();
+    deferred = true;
+  } else if (responder.sendTyping) {
     responder.sendTyping();
-  }
-  if (responder.channel.sendTyping) {
+  } else if (responder.channel.sendTyping) {
     responder.channel.sendTyping();
   }
 
@@ -67,7 +71,9 @@ const replyWithImage = async (responder, { text, num = 1, animate = false, spoil
   await Promise.each(_.sampleSize(results, num), async (imageUrl, i) => {
     let sentMessage;
     let fn = (...args) => responder.reply(...args);
-    if (i > 0 && responder.followUp) {
+    if (i === 0 && deferred) {
+      fn = (...args) => responder.editReply(...args);
+    } else if (i > 0 && responder.followUp) {
       // have to use followUp for interactions for (n+1)th message
       fn = (...args) => responder.followUp(...args);
     }
