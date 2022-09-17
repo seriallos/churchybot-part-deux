@@ -109,10 +109,10 @@ export default (client) => {
       try {
       const roll = 100 * _.random(0, 1, true);
       if (roll < CHATTINESS) {
-        console.log(`suckbot: chatty rolled (${roll} rolled, threshold ${CHATTINESS})`);
-
         // Use the last couple of words of the message as the text generation seed
         const prefix = message.content.split(" ").splice(-2).join(" ")
+
+        console.log(`suckbot: chatty rolled with prefix "${prefix}" (${roll} rolled, threshold ${CHATTINESS})`);
 
         message.channel.sendTyping();
 
@@ -122,6 +122,7 @@ export default (client) => {
       }
       } catch (error) {
         message.channel.send(`A chatty SuckBot error has occurred: ${error.message}`);
+        console.log(error);
       }
     }
   });
