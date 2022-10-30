@@ -82,7 +82,7 @@ const updateScore = async (responder, rawSubject, amount, rawReason) => {
   const now = new Date().getTime();
 
   const subject = _.trim(_.toLower(rawSubject));
-  const reason = _.trim(_.toLower(rawSubject));
+  const reason = _.trim(_.toLower(rawReason));
 
   const author = _.toLower(responder.author?.username || responder.user?.username);
   if (subject === author) {
