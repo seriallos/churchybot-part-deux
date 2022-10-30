@@ -44,7 +44,9 @@ const scoresSummary = async (responder) => {
   responder.reply({ embeds: [ embed ]});
 };
 
-const subjectScore = async (responder, subject) => {
+const subjectScore = async (responder, rawSubject) => {
+  const subject = _.toLower(rawSubject);
+
   console.log(`plusplus: score for ${subject} requested`);
   const result = _.find(plusplus.scores, { subject });
   if (result) {
@@ -76,8 +78,11 @@ const subjectScore = async (responder, subject) => {
   }
 };
 
-const updateScore = async (responder, subject, amount, reason) => {
+const updateScore = async (responder, rawSubject, amount, rawReason) => {
   const now = new Date().getTime();
+
+  const subject = _.trim(_.toLower(rawSubject));
+  const reason = _.trim(_.toLower(rawSubject));
 
   const author = _.toLower(responder.author?.username || responder.user?.username);
   if (subject === author) {
