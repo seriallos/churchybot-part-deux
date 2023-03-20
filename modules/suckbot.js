@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { getChurchybotCommand } from '../util.js';
 
 // Control how often the bot spouts off at random
-const CHATTINESS = 0.1;
+const CHATTINESS = 0.0;
 
 const url = 'https://suckbot-fwxfu3dz3a-ue.a.run.app';
 
@@ -107,19 +107,19 @@ export default (client) => {
       await talkToMe(message, matches[3], matches[1]);
     } else {
       try {
-      const roll = 100 * _.random(0, 1, true);
-      if (roll < CHATTINESS) {
-        // Use the last couple of words of the message as the text generation seed
-        const prefix = message.content.split(" ").splice(-2).join(" ")
+        const roll = 100 * _.random(0, 1, true);
+        if (roll < CHATTINESS) {
+          // Use the last couple of words of the message as the text generation seed
+          const prefix = message.content.split(" ").splice(-2).join(" ")
 
-        console.log(`suckbot: chatty rolled with prefix "${prefix}" (${roll} rolled, threshold ${CHATTINESS})`);
+          console.log(`suckbot: chatty rolled with prefix "${prefix}" (${roll} rolled, threshold ${CHATTINESS})`);
 
-        message.channel.sendTyping();
+          message.channel.sendTyping();
 
-        const text = await fetchText({ prefix });
+          const text = await fetchText({ prefix });
 
-        message.channel.send(text);
-      }
+          message.channel.send(text);
+        }
       } catch (error) {
         message.channel.send(`A chatty SuckBot error has occurred: ${error.message}`);
         console.log(error);
