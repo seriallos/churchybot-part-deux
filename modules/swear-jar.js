@@ -20,12 +20,10 @@ const BAD_WORDS = [
 
   'trump',
 
-  'comics sans',
-
-  'test message',
+  'comic sans',
 ];
 
-const REPEAT_THRESHOLD = 60 * 1000;
+const REPEAT_THRESHOLD = 5 * 60 * 1000;
 
 const BAD_WORDS_REGEX = new RegExp(
   '(' + _.join(BAD_WORDS, '|') + ')',
@@ -54,15 +52,28 @@ const save = async (db) => {
 
 const log = (...args) => console.log('swear-jar:', ...args);
 
-const addEntry = async (who, what, context) => {
+const addEntry = async (responder, whoRaw, whatRaw, context) => {
+  const who = _.trim(_.toLower(whoRaw));
+  const what = _.trim(_.toLower(whatRaw));
+
+  const lastEntry = _.last(_.filter(swearJar.entries, { who, what }));
+  if (lastEntry) {
+    const when = new Date(lastEntry.when);
+    if (Date.now() - when.getTime() < REPEAT_THRESHOLD) {
+      log(`${who} said "${what}" but it was recent enough to ignore`);
+      return;
+    }
+  }
+  log(`${who} said ${what} and owes a dollar`);
   swearJar.entries.push({
-    who: _.trim(_.toLower(who)),
-    what: _.trim(_.toLower(what)),
+    who,
+    what,
     context,
     when: new Date().toJSON(),
   });
-  console.log(swearJar);
   await save(swearJar);
+  await responder.reply(`Put a dollar in the swear jar, ${responder.author.username}. "${whatRaw}" is a bad word around here`);
+
 };
 
 const summary = async (responder) => {
@@ -93,7 +104,7 @@ export const commands = [{
     ),
     */
   execute: async (interaction) => {
-    console.log('Received swearJar interaction');
+    log('Received swearJar interaction');
     const subject = interaction.options.getString('what');
     if (subject) {
       await subjectSummary(interaction, subject);
@@ -122,8 +133,7 @@ export default async (client) => {
     const matches = message.content.match(BAD_WORDS_REGEX);
     if (matches) {
       const badWord = matches[1];
-      await addEntry(message.author.username, badWord, message.content);
-      message.reply(`Put a dollar in the swear jar, ${message.author.username}. "${badWord}" is a bad word around here`);
+      await addEntry(message, message.author.username, badWord, message.content);
     }
   });
 };
