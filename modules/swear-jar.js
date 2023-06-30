@@ -18,15 +18,13 @@ const BAD_WORDS = [
   'elon',
   'musk',
 
-  'trump',
-
   'comic sans',
 ];
 
 const REPEAT_THRESHOLD = 5 * 60 * 1000;
 
 const BAD_WORDS_REGEX = new RegExp(
-  '(' + _.join(BAD_WORDS, '|') + ')',
+  '\b(' + _.join(BAD_WORDS, '|') + ')\b',
   'i',
 );
 
