@@ -24,7 +24,7 @@ const BAD_WORDS = [
 const REPEAT_THRESHOLD = 5 * 60 * 1000;
 
 const BAD_WORDS_REGEX = new RegExp(
-  '\b(' + _.join(BAD_WORDS, '|') + ')\b',
+  '\\b(' + _.join(BAD_WORDS, '|') + ')\\b',
   'i',
 );
 
