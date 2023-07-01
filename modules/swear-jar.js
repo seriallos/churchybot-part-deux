@@ -17,6 +17,7 @@ import { getChurchybotCommand } from '../util.js';
 const BAD_WORDS = [
   'elon',
   'musk',
+  'elonmusk',
 
   'comic sans',
 ];
