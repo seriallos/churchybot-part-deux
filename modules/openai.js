@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Discord, { SlashCommandBuilder } from 'discord.js';
 import got from 'got';
 
@@ -44,12 +45,13 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
   }
 };
 
-const replyWithCompletion = async (responder, { prompt }) => {
+const replyWithCompletion = async (responder, { prompt, model = 'gpt-3.5-turbo' }) => {
   await responder.deferReply();
 
   try {
+    const start = Date.now();
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model,
       messages: [{
         role: 'system',
         content: 'You are a helpful Discord bot. Your responses should be limited to 500 characters. Use markdown when appropriate.',
@@ -58,12 +60,19 @@ const replyWithCompletion = async (responder, { prompt }) => {
         content: prompt,
       }],
     });
+    const duration = Date.now() - start;
 
     await responder.editReply({
       embeds: [
         new Discord.EmbedBuilder()
           .setTitle(prompt)
-          .setDescription(completion.choices[0].message.content),
+          .setDescription(completion.choices[0].message.content)
+          .setFooter({
+            text: (
+              `Response time: ${_.round(duration).toLocaleString()}ms\n` +
+              `Model: ${model}`
+            ),
+          }),
       ],
     });
   } catch (error) {
@@ -97,13 +106,20 @@ export const commands =[{
       option.setName('prompt')
         .setDescription('Prompt text')
         .setRequired(true),
-  ),
+    )
+    .addStringOption(option =>
+      option.setName('model')
+        .setDescription('GPT Model (e.g. gpt-4, gpt-3.5-turbo)')
+        .setRequired(false),
+    ),
   execute: async (interaction) => {
     console.log('Received ChatGPT interaction');
     const prompt = interaction.options.getString('prompt');
+    const model = interaction.options.getString('model');
     console.log('prompt =', prompt);
     replyWithCompletion(interaction, {
       prompt,
+      model: model || undefined,
     });
   },
 }];
