@@ -1,5 +1,9 @@
+import path from 'path';
+
 import Discord, { SlashCommandBuilder } from 'discord.js';
 import got from 'got';
+import { nanoid } from 'nanoid';
+import { Storage } from '@google-cloud/storage';
 
 import OpenAI from 'openai';
 
@@ -9,10 +13,18 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
 
+const storage = new Storage();
+
+const BUCKET = 'churchybot';
+
 const sizes = {
   small: '256x256',
   medium: '512x512',
   large: '1024x1024',
+};
+
+const log = (...args) => {
+  console.log('openai:', ...args);
 };
 
 const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) => {
@@ -23,10 +35,19 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
       prompt,
       n: num,
       size: sizes[size],
-      response_format: 'url',
+      response_format: 'b64_json',
     });
 
-    const imageUrl = image.data[0].url;
+    const data = image.data[0].b64_json;
+
+    // save in google storage
+    const bucket = storage.bucket(BUCKET);
+    const filename = path.join('dalle', `${nanoid()}.png`);
+    const file = bucket.file(filename);
+    await file.save(Buffer.from(data, 'base64'));
+    await file.makePublic();
+
+    const imageUrl = `https://storage.googleapis.com/churchybot/${filename}`;
 
     await responder.editReply({
       embeds: [
@@ -35,9 +56,6 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
           .setImage(imageUrl),
       ],
     });
-
-    // TODO: Save the image somewhere else
-    // TODO: Figure out if there are any more weird error conditions
   } catch (error) {
     console.error('something bad happened', error);
     await responder.editReply('**Error:** ' + (error.response?.error?.message || error.message || 'unknown'));
@@ -82,9 +100,9 @@ export const commands =[{
         .setRequired(true),
   ),
   execute: async (interaction) => {
-    console.log('Received dalle interaction');
+    log('Received dalle interaction');
     const prompt = interaction.options.getString('prompt');
-    console.log('prompt =', prompt);
+    log('prompt =', prompt);
     replyWithImage(interaction, {
       prompt,
     });
@@ -99,28 +117,26 @@ export const commands =[{
         .setRequired(true),
   ),
   execute: async (interaction) => {
-    console.log('Received ChatGPT interaction');
+    log('Received ChatGPT interaction');
     const prompt = interaction.options.getString('prompt');
-    console.log('prompt =', prompt);
+    log('prompt =', prompt);
     replyWithCompletion(interaction, {
       prompt,
     });
   },
 }];
 
-export default (client) => {
+export default async (client) => {
   if (!OPENAI_API_KEY) {
     console.warn('Missing env vars for openai: CHURCHYBOT_OPENAI_API_KEY');
     console.warn('OpenAI commands are disabled!');
   } else {
-    client.on('messageCreate', async message => {
-      // ignore bot messages
-      if (message.author.bot) {
-        return;
-      }
-      if (message.content.match(/^dad ?joke$/)) {
-        execute(message);
-      }
-    });
+    const [bucketExists] = await storage.bucket(BUCKET).exists();
+    if (!bucketExists) {
+      log(`Creating bucket ${BUCKET}`);
+      await storage.createBucket(BUCKET);
+    } else {
+      log(`Bucket ${BUCKET} already exists`);
+    }
   }
 }
