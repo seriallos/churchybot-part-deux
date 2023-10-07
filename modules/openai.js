@@ -131,12 +131,6 @@ export default async (client) => {
     console.warn('Missing env vars for openai: CHURCHYBOT_OPENAI_API_KEY');
     console.warn('OpenAI commands are disabled!');
   } else {
-    const [bucketExists] = await storage.bucket(BUCKET).exists();
-    if (!bucketExists) {
-      log(`Creating bucket ${BUCKET}`);
-      await storage.createBucket(BUCKET);
-    } else {
-      log(`Bucket ${BUCKET} already exists`);
-    }
+    // do stuff
   }
 }
