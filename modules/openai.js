@@ -9,25 +9,13 @@ const openai = new OpenAI({
   apiKey: OPENAI_API_KEY,
 });
 
-
-export const execute = async responder => {
-  console.log('dadjoke requested');
-  const response = await got(url, { headers: { Accept: 'application/json' } });
-
-  const results = JSON.parse(response.body);
-
-  const joke = results.joke;
-
-  responder.reply(joke);
-};
-
 const sizes = {
   small: '256x256',
   medium: '512x512',
   large: '1024x1024',
 };
 
-const replyWithImage = async (responder, { prompt, num = 1, size = 'medium' }) => {
+const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) => {
   await responder.deferReply();
 
   try {
@@ -41,7 +29,31 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'medium' }) =
     await responder.editReply(image.data[0].url);
   } catch (error) {
     console.error('something bad happened', error);
-    await responder.editReply('Something bad happened:', error?.error?.message || error.message || 'unknown');
+    await responder.editReply('**Error:** ' + (error.response?.error?.message || error.message || 'unknown'));
+  }
+};
+
+const replyWithCompletion = async (responder, { prompt }) => {
+  await responder.deferReply();
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{
+        role: 'system',
+        content: 'You are a helpful Discord bot. Your responses should be limited to 500 characters.',
+      }, {
+        role: 'user',
+        content: prompt,
+      }],
+    });
+
+    console.log(completion.choices);
+
+    await responder.editReply(completion.choices[0].message.content);
+  } catch (error) {
+    console.error('something bad happened', error);
+    await responder.editReply('**Error:** ' + (error.response?.error?.message || error.message || 'unknown'));
   }
 };
 
@@ -59,6 +71,23 @@ export const commands =[{
     const prompt = interaction.options.getString('prompt');
     console.log('prompt =', prompt);
     replyWithImage(interaction, {
+      prompt,
+    });
+  },
+}, {
+  command: new SlashCommandBuilder()
+    .setName('chatgpt')
+    .setDescription('Submit a prompt to ChatGPT')
+    .addStringOption(option => 
+      option.setName('prompt')
+        .setDescription('Prompt text')
+        .setRequired(true),
+  ),
+  execute: async (interaction) => {
+    console.log('Received ChatGPT interaction');
+    const prompt = interaction.options.getString('prompt');
+    console.log('prompt =', prompt);
+    replyWithCompletion(interaction, {
       prompt,
     });
   },
