@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import Discord, { SlashCommandBuilder } from 'discord.js';
 import got from 'got';
 
 import OpenAI from 'openai';
@@ -26,7 +26,18 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
       response_format: 'url',
     });
 
-    await responder.editReply(image.data[0].url);
+    const imageUrl = image.data[0].url;
+
+    await responder.editReply({
+      embeds: [
+        new Discord.EmbedBuilder()
+          .setFooter({ text: prompt })
+          .setImage(imageUrl),
+      ],
+    });
+
+    // TODO: Save the image somewhere else
+    // TODO: Figure out if there are any more weird error conditions
   } catch (error) {
     console.error('something bad happened', error);
     await responder.editReply('**Error:** ' + (error.response?.error?.message || error.message || 'unknown'));
@@ -41,16 +52,20 @@ const replyWithCompletion = async (responder, { prompt }) => {
       model: 'gpt-4',
       messages: [{
         role: 'system',
-        content: 'You are a helpful Discord bot. Your responses should be limited to 500 characters.',
+        content: 'You are a helpful Discord bot. Your responses should be limited to 500 characters. Use markdown when appropriate.',
       }, {
         role: 'user',
         content: prompt,
       }],
     });
 
-    console.log(completion.choices);
-
-    await responder.editReply(completion.choices[0].message.content);
+    await responder.editReply({
+      embeds: [
+        new Discord.EmbedBuilder()
+          .setTitle(prompt)
+          .setDescription(completion.choices[0].message.content),
+      ],
+    });
   } catch (error) {
     console.error('something bad happened', error);
     await responder.editReply('**Error:** ' + (error.response?.error?.message || error.message || 'unknown'));
