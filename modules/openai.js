@@ -28,7 +28,7 @@ const log = (...args) => {
   console.log('openai:', ...args);
 };
 
-const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) => {
+const replyWithImage = async (responder, { prompt, num = 1, size = 'large', model = 'dall-e-3' }) => {
   await responder.deferReply();
 
   try {
@@ -37,6 +37,7 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
       n: num,
       size: sizes[size],
       response_format: 'b64_json',
+      model,
     });
 
     const data = image.data[0].b64_json;
@@ -63,7 +64,7 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large' }) =>
   }
 };
 
-const replyWithCompletion = async (responder, { prompt, model = 'gpt-3.5-turbo' }) => {
+const replyWithCompletion = async (responder, { prompt, model = 'gpt-4-1106-preview' }) => {
   await responder.deferReply();
 
   try {
@@ -103,17 +104,24 @@ export const commands =[{
   command: new SlashCommandBuilder()
     .setName('dalle')
     .setDescription('Submit a prompt to DALL-E 2')
-    .addStringOption(option => 
+    .addStringOption(option =>
       option.setName('prompt')
         .setDescription('Prompt text')
-        .setRequired(true),
-  ),
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option.setName('model')
+        .setDescription('DALL-E Model (e.g. dall-e-3, dall-e-2)')
+        .setRequired(false)
+    ),
   execute: async (interaction) => {
     log('Received dalle interaction');
     const prompt = interaction.options.getString('prompt');
+    const model = interaction.options.getString('model');
     log('prompt =', prompt);
     replyWithImage(interaction, {
       prompt,
+      model: model || undefined,
     });
   },
 }, {
