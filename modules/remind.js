@@ -149,7 +149,7 @@ const saveReminder = async (responder, what, when) => {
 export const commands = [{
   command: new SlashCommandBuilder()
     .setName('remind')
-    .setDescription('Show the top and bottom 10 scores')
+    .setDescription('Remind the channel about something')
     .addStringOption(option =>
       option.setName('what')
         .setDescription('Text of the reminder')
