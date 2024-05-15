@@ -64,7 +64,7 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large', mode
   }
 };
 
-const replyWithCompletion = async (responder, { prompt, model = 'gpt-4-1106-preview' }) => {
+const replyWithCompletion = async (responder, { prompt, model = 'gpt-4o' }) => {
   await responder.deferReply();
 
   try {
@@ -135,7 +135,7 @@ export const commands =[{
     )
     .addStringOption(option =>
       option.setName('model')
-        .setDescription('GPT Model (e.g. gpt-4, gpt-3.5-turbo)')
+        .setDescription('GPT Model (e.g. gpt-4o, gpt-4, gpt-3.5-turbo)')
         .setRequired(false),
     ),
   execute: async (interaction) => {
