@@ -22,23 +22,36 @@ const sizes = {
   small: '256x256',
   medium: '512x512',
   large: '1024x1024',
+  auto: '1024x1024',
 };
 
 const log = (...args) => {
   console.log('openai:', ...args);
 };
 
-const replyWithImage = async (responder, { prompt, num = 1, size = 'large', model = 'dall-e-3' }) => {
+const replyWithImage = async (responder, { prompt, num = 1, size = 'auto', model = 'gpt-image-1' }) => {
   await responder.deferReply();
 
   try {
-    const image = await openai.images.generate({
-      prompt,
-      n: num,
-      size: sizes[size],
-      response_format: 'b64_json',
-      model,
-    });
+    const start = Date.now();
+    let image;
+    if (model.startsWith('dall-e')) {
+      image = await openai.images.generate({
+        prompt,
+        n: num,
+        size: sizes[size],
+        response_format: 'b64_json',
+        model,
+      });
+    } else {
+      image = await openai.images.generate({
+        prompt,
+        n: num,
+        size: 'auto',
+        model,
+      });
+    }
+    const duration = Date.now() - start;
 
     const data = image.data[0].b64_json;
 
@@ -54,8 +67,14 @@ const replyWithImage = async (responder, { prompt, num = 1, size = 'large', mode
     await responder.editReply({
       embeds: [
         new Discord.EmbedBuilder()
-          .setFooter({ text: prompt })
-          .setImage(imageUrl),
+          .setDescription(prompt)
+          .setImage(imageUrl)
+          .setFooter({
+            text: (
+              `Response time: ${_.round(duration).toLocaleString()}ms\n` +
+              `Model: ${model}`
+            ),
+          }),
       ],
     });
   } catch (error) {
@@ -103,7 +122,7 @@ const replyWithCompletion = async (responder, { prompt, model = 'gpt-4o' }) => {
 export const commands =[{
   command: new SlashCommandBuilder()
     .setName('dalle')
-    .setDescription('Submit a prompt to DALL-E 2')
+    .setDescription('Submit a prompt to OpenAI Image gen')
     .addStringOption(option =>
       option.setName('prompt')
         .setDescription('Prompt text')
@@ -111,7 +130,7 @@ export const commands =[{
     )
     .addStringOption(option =>
       option.setName('model')
-        .setDescription('DALL-E Model (e.g. dall-e-3, dall-e-2)')
+        .setDescription('DALL-E Model (e.g. gpt-image-1, dall-e-3)')
         .setRequired(false)
     ),
   execute: async (interaction) => {
@@ -128,7 +147,7 @@ export const commands =[{
   command: new SlashCommandBuilder()
     .setName('chatgpt')
     .setDescription('Submit a prompt to ChatGPT')
-    .addStringOption(option => 
+    .addStringOption(option =>
       option.setName('prompt')
         .setDescription('Prompt text')
         .setRequired(true),
